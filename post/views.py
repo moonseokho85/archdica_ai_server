@@ -22,7 +22,7 @@ class PostView(APIView):
             print("posts_serializer: ", posts_serializer)
             print("posts_serializer.data: ", posts_serializer.validated_data)
             print("posts_serializer.validated_data['type']: ", posts_serializer.validated_data['type'])
-            cmd = 'python3 -u ./post/SSP/test.py --imgs test_data/ --gpus 0 --cfg config/ade20k-hrnetv2.yaml --TEST.result test_result/wall/ --TEST.checkpoint epoch_0.pth --MODEL.object_index 0'
+            cmd = 'python3 -u ./post/SSP/test.py --imgs test_data/ --gpu 0 --cfg config/ade20k-hrnetv2.yaml --TEST.result test_result/wall/ --TEST.checkpoint epoch_0.pth --MODEL.object_index 0'
             subprocess.call(cmd, shell=True)
             posts_serializer.save()
             print("save successfully!")

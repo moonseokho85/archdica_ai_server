@@ -22,11 +22,11 @@ class PostView(APIView):
             print("posts_serializer: ", posts_serializer)
             print("posts_serializer.data: ", posts_serializer.validated_data)
             print("posts_serializer.validated_data['type']: ", posts_serializer.validated_data['type'])
-            cmd = 'python3 -u ./post/SSP/test.py --imgs {0} --gpu 0 --cfg ./post/SSP/config/ade20k-hrnetv2.yaml TEST.result ./post/SSP/test_result/wall/ TEST.checkpoint epoch_0.pth MODEL.object_index 0'.format(posts_serializer.validated_data['room_image'])
-            subprocess.call(cmd, shell=True)
             posts_serializer.save()
             print("save successfully!")
             print("posts_serializer.data: ", posts_serializer.data)
+            cmd = 'python3 -u ./post/SSP/test.py --imgs {0} --gpu 0 --cfg ./post/SSP/config/ade20k-hrnetv2.yaml TEST.result ./post/SSP/test_result/wall/ TEST.checkpoint epoch_0.pth MODEL.object_index 0'.format(posts_serializer.data['room_image'])
+            subprocess.call(cmd, shell=True)
             return Response(posts_serializer.data, status=status.HTTP_201_CREATED)
         else:
             print('Error: ', posts_serializer.errors)

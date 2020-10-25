@@ -5,3 +5,5 @@ __pycache__
 media
 post/SSP
 secrets.json
+
+venv

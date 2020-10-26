@@ -44,7 +44,7 @@ SECRET_KEY = get_secret("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True  # if True, development mode. else production mode.
 
-ALLOWED_HOSTS = ['52.79.233.126']  # if DEBUG is True, Default value of ALLOWED_HOSTS is 'localhost', '127.0.0.1'
+ALLOWED_HOSTS = ['3.35.26.84']  # if DEBUG is True, Default value of ALLOWED_HOSTS is 'localhost', '127.0.0.1'
 
 
 # Application definition

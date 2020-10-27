@@ -30,8 +30,16 @@ class PostView(APIView):
             room_image_url = '.' + posts_serializer.data['room_image']
             print("room_image_url", room_image_url)
 
-            cmd = 'python3 -u ./post/SSP/test.py --imgs {0} --gpu 0 --cfg ./post/SSP/config/ade20k-hrnetv2.yaml TEST.result ./post/SSP/test_result/wall/ TEST.checkpoint epoch_0.pth MODEL.object_index 0'.format(room_image_url)
-            subprocess.call(cmd, shell=True)
+            if posts_serializer.validated_data['type'] == 'wall':
+                cmd = 'python3 -u ./post/SSP/test.py --imgs {0} --gpu 0 --cfg ./post/SSP/config/ade20k-hrnetv2.yaml TEST.result ./post/SSP/test_result/wall/ TEST.checkpoint epoch_0.pth MODEL.object_index 0'.format(
+                    room_image_url)
+                subprocess.call(cmd, shell=True)
+            elif posts_serializer.validated_data['type'] == "floor":
+                cmd = 'python3 -u ./post/SSP/test.py --imgs {0} --gpu 0 --cfg ./post/SSP/config/ade20k-hrnetv2.yaml TEST.result ./post/SSP/test_result/floor/ TEST.checkpoint epoch_0.pth MODEL.object_index 0'.format(
+                    room_image_url)
+                subprocess.call(cmd, shell=True)
+            else:
+                return
 
             return Response(posts_serializer.data, status=status.HTTP_201_CREATED)
         else:

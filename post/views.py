@@ -41,6 +41,8 @@ class PostView(APIView):
             else:
                 return
 
+
+
             return Response(posts_serializer.data, status=status.HTTP_201_CREATED)
         else:
             print('Error: ', posts_serializer.errors)

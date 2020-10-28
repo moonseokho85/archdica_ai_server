@@ -6,7 +6,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status
 import subprocess
-from .functions import synthesize
+from .functions.synthesize import synthesize
 
 
 class PostView(APIView):

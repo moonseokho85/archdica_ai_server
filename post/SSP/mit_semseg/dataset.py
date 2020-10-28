@@ -280,10 +280,14 @@ class TestDataset(BaseDataset):
 
     def __getitem__(self, index):
         this_record = self.list_sample[index]
+
         # load image
         image_path = this_record['fpath_img']
         img = Image.open(image_path).convert('RGB')
-        img = img.resize(...)
+        
+        # resize image
+        img = img.resize((1280, 720))
+
         ori_width, ori_height = img.size
 
         img_resized_list = []

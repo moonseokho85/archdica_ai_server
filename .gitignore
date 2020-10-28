@@ -4,6 +4,8 @@ __pycache__
 
 media
 
+post/functions/pytorch_room_layout
+
 post/SSP/ckpt
 post/SSP/config
 post/SSP/mit_semseg

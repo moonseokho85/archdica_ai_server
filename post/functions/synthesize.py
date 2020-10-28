@@ -21,7 +21,10 @@ def synthesize(room_image_url, object_type):
         bucket = s3.Bucket('wall-mask')
         wall_mask_object = bucket.Object(room_image_url)
 
-        file_stream = io.StringIO()
+        # file_stream = io.StringIO()
+        file_stream = io.BytesIO
+        print("file_stream of wall_mask_object: ", file_stream)
+
         wall_mask_object.download_fileobj(file_stream)
         wall_mask_img = mpimg.imread(file_stream)
         print("type of img: ", type(wall_mask_img))
@@ -31,7 +34,10 @@ def synthesize(room_image_url, object_type):
         bucket = s3.Bucket('floor-mask')
         floor_mask_object = bucket.Object(room_image_url)
 
-        file_stream = io.StringIO()
+        # file_stream = io.StringIO()
+        file_stream = io.BytesIO
+        print("file_stream of floor_mask_object: ", file_stream)
+
         floor_mask_object.download_fileobj(file_stream)
         floor_mask_img = mpimg.imread(file_stream)
         print("type of img: ", type(floor_mask_img))
@@ -43,7 +49,10 @@ def synthesize(room_image_url, object_type):
     bucket = s3.Bucket('archdica-material')
     reference_object = bucket.Object(room_image_url)
 
-    file_stream = io.StringIO()
+    # file_stream = io.StringIO()
+    file_stream = io.BytesIO
+    print("file_stream of reference_object: ", file_stream)
+
     reference_object.download_fileobj(file_stream)
     reference_img = mpimg.imread(file_stream)
     print("type of img: ", type(reference_img))

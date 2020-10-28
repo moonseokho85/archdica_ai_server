@@ -6,6 +6,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status
 import subprocess
+from .functions import synthesize
 
 
 class PostView(APIView):
@@ -41,7 +42,7 @@ class PostView(APIView):
             else:
                 return
 
-
+            synthesize(room_image_url, posts_serializer.validated_data['type'])
 
             return Response(posts_serializer.data, status=status.HTTP_201_CREATED)
         else:

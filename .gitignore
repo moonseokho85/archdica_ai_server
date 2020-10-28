@@ -8,7 +8,6 @@ post/functions/pytorch_room_layout
 
 post/SSP/ckpt
 post/SSP/config
-post/SSP/mit_semseg
 
 secrets.json
 

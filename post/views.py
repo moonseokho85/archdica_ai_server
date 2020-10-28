@@ -31,6 +31,7 @@ class PostView(APIView):
             room_image_url = '.' + posts_serializer.data['room_image']
             print("room_image_url", room_image_url)
 
+            # Semantic segmentaion
             if posts_serializer.validated_data['type'] == 'wall':
                 cmd = 'python3 -u ./post/SSP/test.py --imgs {0} --gpu 0 --cfg ./post/SSP/config/ade20k-hrnetv2.yaml TEST.result ./post/SSP/test_result/wall/ TEST.checkpoint epoch_0.pth MODEL.object_index 0'.format(
                     room_image_url)
@@ -42,6 +43,7 @@ class PostView(APIView):
             else:
                 return
 
+            # Synthesize room image and material image
             synthesize(room_image_url, posts_serializer.validated_data['type'])
 
             return Response(posts_serializer.data, status=status.HTTP_201_CREATED)

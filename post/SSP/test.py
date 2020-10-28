@@ -139,7 +139,6 @@ def test(segmentation_module, loader, gpu):
         batch_data = batch_data[0]
         print("batch_data: ", batch_data)
         print("type of batch_data: ", type(batch_data))
-        print("data type of batch_data: ", batch_data.dtype)
 
         segSize = (batch_data['img_ori'].shape[0], batch_data['img_ori'].shape[1])
         img_resized_list = batch_data['img_data']

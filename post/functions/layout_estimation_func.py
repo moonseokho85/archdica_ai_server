@@ -111,7 +111,7 @@ from PIL import Image
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-from pytorch_room_layout.XiaohuLuVPDetection.lu_vp_detect.vp_detection import VPDetection
+from .pytorch_room_layout.XiaohuLuVPDetection.lu_vp_detect.vp_detection import VPDetection
 import time
 # import os
 import cv2

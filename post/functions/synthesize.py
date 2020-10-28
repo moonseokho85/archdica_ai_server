@@ -12,6 +12,7 @@ client = boto3.client('s3')
 
 
 def synthesize(room_image_url, object_type):
+    print("synthesize function was executed.")
 
     object_ = object_type
 
@@ -33,9 +34,9 @@ def synthesize(room_image_url, object_type):
 
         bucket = 'wall-mask'
         key = room_image_url
+        print("key: ", key)
 
         response = client.get_object(Bucket=bucket, Key=key)
-
         print(response)
 
         file_byte_string = s3.get_object(Bucket=bucket, Key=key)['Body'].read()

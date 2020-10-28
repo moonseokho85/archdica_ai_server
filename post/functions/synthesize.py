@@ -287,4 +287,4 @@ def synthesize(room_image_url, object_type):
             # final_img.save(new_save_path + '%s_' % index + mask.replace('png', 'jpg'))
 
             # break
-        break
+    return

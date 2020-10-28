@@ -284,7 +284,7 @@ class TestDataset(BaseDataset):
         # load image
         image_path = this_record['fpath_img']
         img = Image.open(image_path).convert('RGB')
-        
+
         # resize image
         img = img.resize((1280, 720))
 

@@ -33,7 +33,7 @@ def synthesize(room_image_url, object_type):
         # print("type of img: ", type(wall_mask_img))
 
         bucket = 'wall-mask'
-        key = room_image_url
+        key = os.path.basename(room_image_url)
         print("key: ", key)
 
         response = client.get_object(Bucket=bucket, Key=key)

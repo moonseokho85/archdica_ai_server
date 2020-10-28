@@ -8,7 +8,6 @@ from django.core.exceptions import ImproperlyConfigured
 # Numerical libs
 import numpy as np
 import torch
-import gc
 import torch.nn as nn
 from scipy.io import loadmat
 import csv
@@ -133,15 +132,16 @@ def visualize_mask(data, pred, cfg):
 def test(segmentation_module, loader, gpu):
     segmentation_module.eval()
 
-    gc.collect()
-    torch.cuda.empty_cache()
-
     pbar = tqdm(total=len(loader))
     for batch_data in loader:
+
         # process data
         batch_data = batch_data[0]
-        segSize = (batch_data['img_ori'].shape[0],
-                   batch_data['img_ori'].shape[1])
+        print("batch_data: ", batch_data)
+        print("type of batch_data: ", type(batch_data))
+        print("data type of batch_data: ", batch_data.dtype)
+
+        segSize = (batch_data['img_ori'].shape[0], batch_data['img_ori'].shape[1])
         img_resized_list = batch_data['img_data']
 
         with torch.no_grad():

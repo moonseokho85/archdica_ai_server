@@ -8,6 +8,7 @@ from django.core.exceptions import ImproperlyConfigured
 # Numerical libs
 import numpy as np
 import torch
+import gc
 import torch.nn as nn
 from scipy.io import loadmat
 import csv
@@ -218,8 +219,10 @@ def main(cfg, gpu):
     # Main loop
     test(segmentation_module, loader_test, gpu)
 
-    # print('Inference done!')
+    print('Inference done!')
 
+    gc.collect()
+    torch.cuda.empty_cache()
 
 if __name__ == '__main__':
     assert LooseVersion(torch.__version__) >= LooseVersion('0.4.0'), \

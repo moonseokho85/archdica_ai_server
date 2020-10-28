@@ -133,6 +133,9 @@ def visualize_mask(data, pred, cfg):
 def test(segmentation_module, loader, gpu):
     segmentation_module.eval()
 
+    gc.collect()
+    torch.cuda.empty_cache()
+
     pbar = tqdm(total=len(loader))
     for batch_data in loader:
         # process data
@@ -180,6 +183,7 @@ def test(segmentation_module, loader, gpu):
 
 
 def main(cfg, gpu):
+
     torch.cuda.set_device(gpu)
 
     # Network Builders
@@ -221,8 +225,6 @@ def main(cfg, gpu):
 
     print('Inference done!')
 
-    gc.collect()
-    torch.cuda.empty_cache()
 
 if __name__ == '__main__':
     assert LooseVersion(torch.__version__) >= LooseVersion('0.4.0'), \

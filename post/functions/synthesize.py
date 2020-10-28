@@ -8,12 +8,15 @@ import numpy as np
 import boto3
 from io import BytesIO
 
+client = boto3.client('s3')
+
+
 def synthesize(room_image_url, object_type):
 
     object_ = object_type
 
     # Load mask image from S3
-    s3 = boto3.resource('s3', region_name='ap-northeast-2')
+    # s3 = boto3.resource('s3', region_name='ap-northeast-2')
 
     if object_ == "wall":
 
@@ -30,6 +33,10 @@ def synthesize(room_image_url, object_type):
 
         bucket = 'wall-mask'
         key = room_image_url
+
+        response = client.get_object(Bucket=bucket, Key=key)
+
+        print(response)
 
         file_byte_string = s3.get_object(Bucket=bucket, Key=key)['Body'].read()
         image = Image.open(BytesIO(file_byte_string))

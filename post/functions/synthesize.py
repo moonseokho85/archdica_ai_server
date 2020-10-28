@@ -6,8 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
 import boto3
-import io
-
+from io import BytesIO
 
 def synthesize(room_image_url, object_type):
 
@@ -18,16 +17,23 @@ def synthesize(room_image_url, object_type):
 
     if object_ == "wall":
 
-        bucket = s3.Bucket('wall-mask')
-        wall_mask_object = bucket.Object(room_image_url)
+        # bucket = s3.Bucket('wall-mask')
+        # wall_mask_object = bucket.Object(room_image_url)
+        #
+        # # file_stream = io.StringIO()
+        # file_stream = BytesIO
+        # print("file_stream of wall_mask_object: ", file_stream)
+        #
+        # wall_mask_object.download_fileobj(file_stream)
+        # wall_mask_img = mpimg.imread(file_stream)
+        # print("type of img: ", type(wall_mask_img))
 
-        # file_stream = io.StringIO()
-        file_stream = io.BytesIO
-        print("file_stream of wall_mask_object: ", file_stream)
+        bucket = 'wall-mask'
+        key = room_image_url
 
-        wall_mask_object.download_fileobj(file_stream)
-        wall_mask_img = mpimg.imread(file_stream)
-        print("type of img: ", type(wall_mask_img))
+        file_byte_string = s3.get_object(Bucket=bucket, Key=key)['Body'].read()
+        image = Image.open(BytesIO(file_byte_string))
+        print("image: ", image)
 
     elif object_ == "floor":
 
@@ -105,7 +111,7 @@ def synthesize(room_image_url, object_type):
                 continue
             print('mask :', mask)
 
-            image = Image.open(mask_path + mask)
+            # image = Image.open(mask_path + mask)
             org, mask_img = np.split(np.array(image), 2, axis=1)
             # print(org.shape, mask_img.shape)
 

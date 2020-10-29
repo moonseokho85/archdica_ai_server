@@ -3,7 +3,6 @@ from PIL import Image
 import os
 from .layout_estimation_func import refering
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 import numpy as np
 import boto3
 from io import BytesIO
@@ -15,62 +14,31 @@ def synthesize(room_image_url, object_type):
     print("synthesize function was executed.")
 
     object_ = object_type
+    key = os.path.basename(room_image_url)
 
     # Load mask image from S3
-    # s3 = boto3.resource('s3', region_name='ap-northeast-2')
-
     if object_ == "wall":
 
-        # bucket = s3.Bucket('wall-mask')
-        # wall_mask_object = bucket.Object(room_image_url)
-        #
-        # # file_stream = io.StringIO()
-        # file_stream = BytesIO
-        # print("file_stream of wall_mask_object: ", file_stream)
-        #
-        # wall_mask_object.download_fileobj(file_stream)
-        # wall_mask_img = mpimg.imread(file_stream)
-        # print("type of img: ", type(wall_mask_img))
-
         bucket = 'wall-mask'
-        key = os.path.basename(room_image_url)
-        print("key: ", key)
 
-        response = client.get_object(Bucket=bucket, Key=key)
-        print(response)
-
-        file_byte_string = s3.get_object(Bucket=bucket, Key=key)['Body'].read()
+        file_byte_string = client.get_object(Bucket=bucket, Key=key)['Body'].read()
         image = Image.open(BytesIO(file_byte_string))
-        print("image: ", image)
 
     elif object_ == "floor":
 
-        bucket = s3.Bucket('floor-mask')
-        floor_mask_object = bucket.Object(room_image_url)
+        bucket = 'floor-mask'
 
-        # file_stream = io.StringIO()
-        file_stream = io.BytesIO
-        print("file_stream of floor_mask_object: ", file_stream)
-
-        floor_mask_object.download_fileobj(file_stream)
-        floor_mask_img = mpimg.imread(file_stream)
-        print("type of img: ", type(floor_mask_img))
+        file_byte_string = client.get_object(Bucket=bucket, Key=key)['Body'].read()
+        image = Image.open(BytesIO(file_byte_string))
 
     else:
         return
 
     # Load reference image from S3
-    bucket = s3.Bucket('archdica-material')
-    reference_object = bucket.Object(room_image_url)
+    bucket = 'archdica-material'
 
-    # file_stream = io.StringIO()
-    file_stream = io.BytesIO
-    print("file_stream of reference_object: ", file_stream)
-
-    reference_object.download_fileobj(file_stream)
-    reference_img = mpimg.imread(file_stream)
-    print("type of img: ", type(reference_img))
-
+    file_byte_string = client.get_object(Bucket=bucket, Key=key)['Body'].read()
+    refer = Image.open(BytesIO(file_byte_string))
 
     #     Image Version     #
     # mask_path = './test_result/' + object_ + '/'
@@ -143,7 +111,7 @@ def synthesize(room_image_url, object_type):
             img_size = (mask_img.shape[1], mask_img.shape[0])
 
             layout = Image.open(layout_path + mask)
-            refer = Image.open(refer_path + refer_image)
+            # refer = Image.open(refer_path + refer_image)
             # refer = refer.resize(img_size)
             #             Use refering            #
             #       org, layout_img, refer 's type = ndarray        #

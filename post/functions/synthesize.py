@@ -7,13 +7,16 @@ import numpy as np
 import boto3
 from io import BytesIO
 
-client = boto3.client('s3')
-
 
 def synthesize(room_image_url, object_type):
     print("synthesize function was executed.")
 
     object_ = object_type
+
+    # S3 client
+    client = boto3.client('s3')
+
+    # S3 key of image
     key = os.path.basename(room_image_url)
 
     # Load mask image from S3

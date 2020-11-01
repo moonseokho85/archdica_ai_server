@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, Materials
+from .models import Post, Materials, FindSimilarMaterial
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -16,6 +16,6 @@ class MaterialSerializer(serializers.ModelSerializer):
 
 class FindSimilarMaterialSerializer(serializers.ModelSerializer):
     class Meta:
-        model = FindSimilarMaterial  # Todo: make model for FindSimilarMaterial
+        model = FindSimilarMaterial
         fields = '__all__'
 

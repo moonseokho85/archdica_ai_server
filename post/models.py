@@ -1,9 +1,12 @@
 from django.db import models
-import uuid
 
 TYPE_CHOICES = (
     ('wall', 'wall'),
     ('floor', 'floor')
+)
+
+BRAND_CHOICES = (
+    ('Hyundai', 'Hyundai')
 )
 
 
@@ -20,3 +23,19 @@ class Post(models.Model):
 
     def __str__(self):
         return self.email
+
+
+class Materials(models.Model):
+    brand = models.CharField(max_length=20, blank=False, choices=BRAND_CHOICES)
+    sub_brand = models.CharField(max_length=100, blank=True)
+    index = models.CharField(max_length=100, blank=False)
+    type = models.CharField(max_length=20, blank=False, choices=TYPE_CHOICES)
+    url = models.URLField(max_length=200)
+
+    def __str__(self):
+        return self.index
+
+
+class FindSimilarMaterial(models.Model):
+    # Todo: make FSM model
+

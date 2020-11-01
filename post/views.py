@@ -1,6 +1,5 @@
-from django.shortcuts import render
-from .serializers import PostSerializer
-from .models import Post
+from .models import Post, Materials
+from .serializers import PostSerializer, MaterialSerializer, FindSimilarMaterialSerializer
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
@@ -9,8 +8,8 @@ import subprocess
 from .functions.synthesize import synthesize
 
 
-class PostView(APIView):
-    parser_classes = (MultiPartParser, FormParser)
+class ConvertImageAPIView(APIView):
+    parser_classes = (FormParser, MultiPartParser)
 
     def get(self, request, *args, **kwargs):
         posts = Post.objects.all()
@@ -20,18 +19,10 @@ class PostView(APIView):
     def post(self, request, *args, **kwargs):
         posts_serializer = PostSerializer(data=request.data)
         if posts_serializer.is_valid():
-            print("posts_serializer: ", posts_serializer)
-            print("posts_serializer.data: ", posts_serializer.validated_data)
-            print("posts_serializer.validated_data['type']: ", posts_serializer.validated_data['type'])
-
             posts_serializer.save()
-            print("save successfully!")
 
-            print("posts_serializer.data: ", posts_serializer.data)
+            # Semantic segmentation
             room_image_url = '.' + posts_serializer.data['room_image']
-            print("room_image_url", room_image_url)
-
-            # Semantic segmentaion
             if posts_serializer.validated_data['type'] == 'wall':
                 cmd = 'python3 -u ./post/SSP/test.py --imgs {0} --gpu 0 --cfg ./post/SSP/config/ade20k-hrnetv2.yaml TEST.result ./post/SSP/test_result/wall/ TEST.checkpoint epoch_0.pth MODEL.object_index 0'.format(
                     room_image_url)
@@ -44,9 +35,36 @@ class PostView(APIView):
                 return
 
             # Synthesize room image and material image
-            synthesize(room_image_url, posts_serializer.validated_data['type'])
+            conversion_image_url = synthesize(room_image_url, posts_serializer.validated_data['type'])
 
             return Response(posts_serializer.data, status=status.HTTP_201_CREATED)
         else:
             print('Error: ', posts_serializer.errors)
             return Response(posts_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MaterialListCreateAPIView(APIView):
+
+    def get(self, request):
+        materials = Materials.objects.filter(active=True)
+        serializer = MaterialSerializer(materials, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = MaterialSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FindSimilarMaterialAPIView(APIView):
+    parser_classes = (FormParser, MultiPartParser)
+
+    def post(self, request):
+        fsm_serializer = FindSimilarMaterialSerializer(data=request.data)
+        if fsm_serializer.is_valid():
+            fsm_serializer.save()
+            return Response(fsm_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(fsm_serializer.data, status=status.HTTP_400_BAD_REQUEST)

@@ -19,6 +19,7 @@ def synthesize(room_image_url, object_type):
 
     # S3 key of image
     key = os.path.basename(room_image_url)
+    print("key: ", key)
 
     # Load mask image from S3
     if object_ == "wall":

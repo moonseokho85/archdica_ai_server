@@ -154,6 +154,8 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
+AWS_REGION = "ap-northeast-2"  # AWS 지역
+
 if DEBUG:
     STATIC_URL = '/static/'
     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
@@ -169,8 +171,6 @@ else:
 
     AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')  # 액세스 키
     AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')  # 비밀 액세스 키
-
-    AWS_REGION = "ap-northeast-2"  # AWS 지역
 
     AWS_STORAGE_BUCKET_NAME = "archdica-ai-bucket"  # 버킷 이름
     AWS_S3_CUSTOM_DOMAIN = '%s.s3.%s.amazonaws.com' % (

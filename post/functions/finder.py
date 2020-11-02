@@ -9,6 +9,7 @@ from pprint import pprint
 import torchvision.transforms as trans
 
 
+# Todo: making function of finder
 def feature_extractor(model_name, imgs_path):
     def imresize(im, size, interp='bilinear'):
         if interp == 'nearest':

@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from .models import Post, Materials, FindSimilarMaterial
+from .models import Conversion, Materials, FindSimilarMaterial
 
 
-class PostSerializer(serializers.ModelSerializer):
+class ConversionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Post
+        model = Conversion
         fields = '__all__'
 
 

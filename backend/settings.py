@@ -18,6 +18,7 @@ from django.core.exceptions import ImproperlyConfigured
 import environ
 from decouple import config
 
+# Todo: delete code about environ
 env = environ.Env()  # defining env variable
 environ.Env.read_env()  # reading .env file
 

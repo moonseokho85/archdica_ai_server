@@ -28,8 +28,10 @@ from mit_semseg.config import cfg
 # AWS S3
 import boto3
 
+# Todo: delete code about environ
 env = environ.Env()  # defining env variable
 environ.Env.read_env()  # reading .env file
+
 
 def visualize_result(data, pred, cfg):
     colors = loadmat('data/wall150.mat')['colors']

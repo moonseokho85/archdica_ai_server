@@ -1,24 +1,27 @@
-from .models import Post, Materials
-from .serializers import PostSerializer, MaterialSerializer, FindSimilarMaterialSerializer
+from .models import Conversion, Materials
+from .serializers import ConversionSerializer, MaterialSerializer, FindSimilarMaterialSerializer
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status
-import subprocess
 from .functions.synthesize import synthesize
 from .functions.ssp_execute import execute
+from decouple import config
+
+# config
+AWS_DEFAULT_REGION = config('AWS_DEFAULT_REGION')
 
 
 class ConvertImageAPIView(APIView):
     parser_classes = (FormParser, MultiPartParser)
 
     def get(self, request, *args, **kwargs):
-        posts = Post.objects.all()
-        serializer = PostSerializer(posts, many=True)
+        posts = Conversion.objects.all()
+        serializer = ConversionSerializer(posts, many=True)
         return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
-        posts_serializer = PostSerializer(data=request.data)
+        posts_serializer = ConversionSerializer(data=request.data)
         if posts_serializer.is_valid():
             posts_serializer.save()
 
@@ -30,6 +33,7 @@ class ConvertImageAPIView(APIView):
             except Exception as e:
                 print('Error: ', e)
 
+            # Todo: set variables
             wall_mask_url = "https://{0}.s3.{1}.amazonaws.com/{2}".format(AWS_BUCKET_NAME, AWS_DEFAULT_REGION, img_name)
             floor_mask_url = "https://{0}.s3.{1}.amazonaws.com/{2}".format(AWS_BUCKET_NAME, AWS_DEFAULT_REGION, img_name)
 

@@ -10,7 +10,7 @@ BRAND_CHOICES = (
 )
 
 
-class Post(models.Model):
+class Conversion(models.Model):
     email = models.EmailField(max_length=254, blank=False)
     room_image = models.ImageField(upload_to="images/room/%Y/%m/%d", blank=False)
     type = models.CharField(max_length=20, blank=False, choices=TYPE_CHOICES)

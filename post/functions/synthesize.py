@@ -38,10 +38,11 @@ def synthesize(room_image_url, reference_image_url, type):
         return
 
     # Load reference image from S3
-    bucket = 'archdica-material'
-
-    file_byte_string = client.get_object(Bucket=bucket, Key=key)['Body'].read()
-    refer = Image.open(BytesIO(file_byte_string))
+    # bucket = 'archdica-material'
+    #
+    # file_byte_string = client.get_object(Bucket=bucket, Key=key)['Body'].read()
+    # refer = Image.open(BytesIO(file_byte_string))
+    refer = Image.open(reference_image_url)
 
     org, mask_img = np.split(np.array(image), 2, axis=1)
     # print(org.shape, mask_img.shape)

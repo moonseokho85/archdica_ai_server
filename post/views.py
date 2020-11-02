@@ -1,3 +1,7 @@
+# system libs
+import os
+
+# django libs
 from .models import Conversion, Materials
 from .serializers import ConversionSerializer, MaterialSerializer, FindSimilarMaterialSerializer
 from rest_framework.views import APIView
@@ -33,9 +37,12 @@ class ConvertImageAPIView(APIView):
             except Exception as e:
                 print('Error: ', e)
 
-            # Todo: set variables
-            wall_mask_url = "https://{0}.s3.{1}.amazonaws.com/{2}".format(AWS_BUCKET_NAME, AWS_DEFAULT_REGION, img_name)
-            floor_mask_url = "https://{0}.s3.{1}.amazonaws.com/{2}".format(AWS_BUCKET_NAME, AWS_DEFAULT_REGION, img_name)
+            room_image_name = os.path.basename(room_image_url)
+
+            wall_mask_url = "https://{0}.s3.{1}.amazonaws.com/{2}".format('wall-mask', AWS_DEFAULT_REGION,
+                                                                          room_image_name)
+            floor_mask_url = "https://{0}.s3.{1}.amazonaws.com/{2}".format('floor-mask', AWS_DEFAULT_REGION,
+                                                                           room_image_name)
 
             # Synthesize room image and material image
             conversion_image_url = synthesize(room_image_url, posts_serializer.validated_data['type'])
@@ -45,7 +52,7 @@ class ConvertImageAPIView(APIView):
                 'wall_mask_url': wall_mask_url,
                 'floor_mask_url': floor_mask_url
             }
-            newdict.update(posts_serializer.data)
+            newdict.update(posts_serializer.data)  # update previous data
 
             return Response(newdict, status=status.HTTP_201_CREATED)
         else:

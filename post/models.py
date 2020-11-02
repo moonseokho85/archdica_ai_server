@@ -6,7 +6,8 @@ TYPE_CHOICES = (
 )
 
 BRAND_CHOICES = (
-    ('Hyundai', 'Hyundai')
+    ('Hyundai', 'Hyundai'),
+    ('Etc', 'Etc')
 )
 
 

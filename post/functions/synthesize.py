@@ -194,8 +194,6 @@ def synthesize(room_image_url, reference_image_url, type):
 
     final_syn_hsv = cv2.merge([syn_h, syn_s, syn_v])
     final_syn = cv2.cvtColor(final_syn_hsv, cv2.COLOR_HSV2RGB)
-    print("Type of final_syn: ", type(final_syn))
-    print("Data type of final_syn: ", final_syn.dtype)
 
     final_syn = Image.open(final_syn)
 

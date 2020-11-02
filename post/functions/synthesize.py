@@ -208,7 +208,7 @@ def synthesize(room_image_url, object_type):
 
     key = os.path.basename(room_image_url)
 
-    s3.upload_fileobj(final_syn, AWS_BUCKET_NAME, key)
+    s3.upload_fileobj(final_syn, AWS_BUCKET_NAME, key, ExtraArgs={'ACL': 'public-read'})
 
     object_url = "https://{0}.s3.{1}.amazonaws.com/{2}".format(AWS_BUCKET_NAME, AWS_DEFAULT_REGION, key)
 

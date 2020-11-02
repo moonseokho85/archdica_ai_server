@@ -98,7 +98,8 @@ def visualize_mask(data, pred, cfg):
         filename = os.path.join(BASE_DIR, 'post/SSP/test_result/wall/') + img_name
         object_name = img_name
 
-        s3.meta.client.upload_file(filename, AWS_BUCKET_NAME, object_name)
+        # Todo: upload file through public-access
+        s3.meta.client.upload_file(filename, AWS_BUCKET_NAME, object_name, ExtraArgs={'ACL': 'public-read'})
 
         object_url = "https://{0}.s3.{1}.amazonaws.com/{2}".format(AWS_BUCKET_NAME, AWS_DEFAULT_REGION, img_name)
         print("object_url: ", object_url)
@@ -110,7 +111,7 @@ def visualize_mask(data, pred, cfg):
         filename = os.path.join(BASE_DIR, 'post/SSP/test_result/floor/') + img_name
         object_name = img_name
 
-        s3.meta.client.upload_file(filename, AWS_BUCKET_NAME, object_name)
+        s3.meta.client.upload_file(filename, AWS_BUCKET_NAME, object_name, ExtraArgs={'ACL': 'public-read'})
 
         object_url = "https://{0}.s3.{1}.amazonaws.com/{2}".format(AWS_BUCKET_NAME, AWS_DEFAULT_REGION, img_name)
         print("object_url: ", object_url)

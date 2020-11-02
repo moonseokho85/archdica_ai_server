@@ -5,7 +5,10 @@ from .layout_estimation_func import refering
 import numpy as np
 import boto3
 from io import BytesIO
+import environ
 
+env = environ.Env()
+environ.Env.read_env()
 
 def synthesize(room_image_url, object_type):
 
@@ -200,7 +203,7 @@ def synthesize(room_image_url, object_type):
     s3 = boto3.client('s3')
 
     AWS_BUCKET_NAME = 'archdica-conversion'
-    AWS_DEFAULT_REGION = 'ap-northeast-2'
+    AWS_DEFAULT_REGION = env('AWS_DEFAULT_REGION')
 
     key = os.path.basename(room_image_url)
 

@@ -15,31 +15,20 @@ import pymysql
 import os
 import json
 from django.core.exceptions import ImproperlyConfigured
+import environ
 
+env = environ.Env()  # defining env variable
+environ.Env.read_env()  # reading .env file
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-secret_file = os.path.join(BASE_DIR, 'secrets.json')  # secrets.json 파일 위치를 명시
-
-with open(secret_file) as f:
-    secrets = json.loads(f.read())
-
-
-def get_secret(setting, secrets=secrets):
-    """비밀 변수를 가져오거나 명시적 예외를 반환한다."""
-    try:
-        return secrets[setting]
-    except KeyError:
-        error_msg = "Set the {} environment variable".format(setting)
-        raise ImproperlyConfigured(error_msg)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = get_secret("SECRET_KEY")
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True  # if True, development mode. else production mode.
@@ -114,11 +103,11 @@ pymysql.install_as_MySQLdb()  # mysql db 와의 호환을 위해 아래 함수 �
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': get_secret('DB_NAME'),
+        'NAME': env('DB_NAME'),
         'USER': 'logan',
-        'PASSWORD': get_secret('DB_PASSWORD'),
-        'HOST': get_secret('DB_HOST'),
-        'PORT': get_secret('DB_PORT'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
         'OPTIONS': {
             'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"'
         }
@@ -176,8 +165,8 @@ else:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-    AWS_ACCESS_KEY_ID = get_secret('AWS_ACCESS_KEY_ID')  # 액세스 키
-    AWS_SECRET_ACCESS_KEY = get_secret('AWS_SECRET_ACCESS_KEY')  # 비밀 액세스 키
+    AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')  # 액세스 키
+    AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')  # 비밀 액세스 키
 
     AWS_REGION = "ap-northeast-2"  # AWS 지역
 

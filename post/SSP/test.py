@@ -4,6 +4,7 @@ import argparse
 from pathlib import Path
 from distutils.version import LooseVersion
 from django.core.exceptions import ImproperlyConfigured
+import environ
 
 # Numerical libs
 import numpy as np
@@ -26,6 +27,8 @@ from mit_semseg.config import cfg
 # AWS S3
 import boto3
 
+env = environ.Env()  # defining env variable
+environ.Env.read_env()  # reading .env file
 
 def visualize_result(data, pred, cfg):
     colors = loadmat('data/wall150.mat')['colors']
@@ -81,23 +84,7 @@ def visualize_mask(data, pred, cfg):
 
     # Upload through S3
     BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
-    secret_file = os.path.join(BASE_DIR, 'secrets.json')  # secrets.json 파일 위치를 명시
-
-    with open(secret_file) as f:
-        secrets = json.loads(f.read())
-
-    def get_secret(setting, secrets=secrets):
-        """비밀 변수를 가져오거나 명시적 예외를 반환한다."""
-        try:
-            return secrets[setting]
-        except KeyError:
-            error_msg = "Set the {} environment variable".format(setting)
-            raise ImproperlyConfigured(error_msg)
-
-    AWS_ACCESS_KEY_ID = get_secret("AWS_ACCESS_KEY_ID")
-    AWS_SECRET_ACCESS_KEY = get_secret("AWS_SECRET_ACCESS_KEY")
-    AWS_DEFAULT_REGION = "ap-northeast-2"
+    AWS_DEFAULT_REGION = env('AWS_DEFAULT_REGION')
 
     s3 = boto3.resource('s3')
 

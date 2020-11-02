@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 import subprocess
 from .functions.synthesize import synthesize
+from .functions.ssp_execute import execute
 
 
 class ConvertImageAPIView(APIView):
@@ -23,21 +24,26 @@ class ConvertImageAPIView(APIView):
 
             # Semantic segmentation
             room_image_url = '.' + posts_serializer.data['room_image']
-            if posts_serializer.validated_data['type'] == 'wall':
-                cmd = 'python3 -u ./post/SSP/test.py --imgs {0} --gpu 0 --cfg ./post/SSP/config/ade20k-hrnetv2.yaml TEST.result ./post/SSP/test_result/wall/ TEST.checkpoint epoch_0.pth MODEL.object_index 0'.format(
-                    room_image_url)
-                subprocess.call(cmd, shell=True)
-            elif posts_serializer.validated_data['type'] == "floor":
-                cmd = 'python3 -u ./post/SSP/test.py --imgs {0} --gpu 0 --cfg ./post/SSP/config/ade20k-hrnetv2.yaml TEST.result ./post/SSP/test_result/floor/ TEST.checkpoint epoch_0.pth MODEL.object_index 3'.format(
-                    room_image_url)
-                subprocess.call(cmd, shell=True)
-            else:
-                return
+
+            try:
+                execute(room_image_url)
+            except Exception as e:
+                print('Error: ', e)
+
+            wall_mask_url = "https://{0}.s3.{1}.amazonaws.com/{2}".format(AWS_BUCKET_NAME, AWS_DEFAULT_REGION, img_name)
+            floor_mask_url = "https://{0}.s3.{1}.amazonaws.com/{2}".format(AWS_BUCKET_NAME, AWS_DEFAULT_REGION, img_name)
 
             # Synthesize room image and material image
             conversion_image_url = synthesize(room_image_url, posts_serializer.validated_data['type'])
 
-            return Response(posts_serializer.data, status=status.HTTP_201_CREATED)
+            newdict = {
+                'conversion_image_url': conversion_image_url,
+                'wall_mask_url': wall_mask_url,
+                'floor_mask_url': floor_mask_url
+            }
+            newdict.update(posts_serializer.data)
+
+            return Response(newdict, status=status.HTTP_201_CREATED)
         else:
             print('Error: ', posts_serializer.errors)
             return Response(posts_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

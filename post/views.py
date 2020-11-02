@@ -32,6 +32,7 @@ class ConvertImageAPIView(APIView):
 
             # Semantic segmentation
             room_image_url = '.' + posts_serializer.data['room_image']
+            reference_image_url = '.' + posts_serializer.data['reference_image']
 
             try:
                 execute(room_image_url)
@@ -46,7 +47,8 @@ class ConvertImageAPIView(APIView):
                                                                            room_image_name)
 
             # Synthesize room image and material image
-            conversion_image_url = synthesize(room_image_url, posts_serializer.validated_data['type'])
+            conversion_image_url = synthesize(room_image_url, reference_image_url,
+                                              posts_serializer.validated_data['type'])
 
             newdict = {
                 'conversion_image_url': conversion_image_url,

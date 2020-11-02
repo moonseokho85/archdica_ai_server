@@ -5,14 +5,12 @@ from .layout_estimation_func import refering
 import numpy as np
 import boto3
 from io import BytesIO
-import environ
+from django.conf import settings
 
-env = environ.Env()
-environ.Env.read_env()
 
-def synthesize(room_image_url, object_type):
+def synthesize(room_image_url, reference_image_url, type):
 
-    object_ = object_type
+    object_ = type
 
     # S3 client
     client = boto3.client('s3')
@@ -204,7 +202,7 @@ def synthesize(room_image_url, object_type):
     s3 = boto3.client('s3')
 
     AWS_BUCKET_NAME = 'archdica-conversion'
-    AWS_DEFAULT_REGION = env('AWS_DEFAULT_REGION')
+    AWS_DEFAULT_REGION = settings.AWS_REGION
 
     key = os.path.basename(room_image_url)
 

@@ -16,6 +16,7 @@ import os
 import json
 from django.core.exceptions import ImproperlyConfigured
 import environ
+from decouple import config
 
 env = environ.Env()  # defining env variable
 environ.Env.read_env()  # reading .env file
@@ -28,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True  # if True, development mode. else production mode.
@@ -165,8 +166,8 @@ else:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-    AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')  # 액세스 키
-    AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')  # 비밀 액세스 키
+    AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')  # 액세스 키
+    AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')  # 비밀 액세스 키
 
     AWS_REGION = "ap-northeast-2"  # AWS 지역
 

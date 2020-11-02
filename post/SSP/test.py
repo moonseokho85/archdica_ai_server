@@ -5,6 +5,7 @@ from pathlib import Path
 from distutils.version import LooseVersion
 from django.core.exceptions import ImproperlyConfigured
 import environ
+from decouple import config
 
 # Numerical libs
 import numpy as np
@@ -84,7 +85,7 @@ def visualize_mask(data, pred, cfg):
 
     # Upload through S3
     BASE_DIR = Path(__file__).resolve().parent.parent.parent
-    AWS_DEFAULT_REGION = env('AWS_DEFAULT_REGION')
+    AWS_DEFAULT_REGION = config('AWS_DEFAULT_REGION')
 
     s3 = boto3.resource('s3')
 

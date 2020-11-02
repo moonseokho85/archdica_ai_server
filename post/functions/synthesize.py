@@ -195,7 +195,8 @@ def synthesize(room_image_url, reference_image_url, type):
     final_syn_hsv = cv2.merge([syn_h, syn_s, syn_v])
     final_syn = cv2.cvtColor(final_syn_hsv, cv2.COLOR_HSV2RGB)
 
-    final_syn = Image.open(final_syn)
+    # final_syn = Image.open(final_syn) # => Image.fromarray()
+    final_syn = Image.fromarray(final_syn)
 
     # S3 upload
     s3 = boto3.client('s3')

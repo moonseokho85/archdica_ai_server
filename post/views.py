@@ -28,6 +28,7 @@ class ConvertImageAPIView(APIView):
         posts_serializer = ConversionSerializer(data=request.data)
         if posts_serializer.is_valid():
             posts_serializer.save()
+            print('posts_serializer.data: ', posts_serializer.data)
 
             # Semantic segmentation
             room_image_url = '.' + posts_serializer.data['room_image']

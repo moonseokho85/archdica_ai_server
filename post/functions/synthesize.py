@@ -196,7 +196,13 @@ def synthesize(room_image_url, reference_image_url, type):
     final_syn = cv2.cvtColor(final_syn_hsv, cv2.COLOR_HSV2RGB)
 
     # final_syn = Image.open(final_syn) # => Image.fromarray()
-    final_syn = Image.fromarray(final_syn)
+
+    # convert ndarray to file-like object for s3
+    img = Image.fromarray(final_syn)
+    img_obj = BytesIO()
+    img.save(img_obj, format="jpeg")
+    img_obj.seek(0)
+
 
     # S3 upload
     s3 = boto3.client('s3')
@@ -206,7 +212,7 @@ def synthesize(room_image_url, reference_image_url, type):
 
     key = os.path.basename(room_image_url)
 
-    s3.upload_fileobj(final_syn, AWS_BUCKET_NAME, key, ExtraArgs={'ACL': 'public-read'})
+    s3.upload_fileobj(img_obj, AWS_BUCKET_NAME, key, ExtraArgs={'ACL': 'public-read'})
 
     object_url = "https://{0}.s3.{1}.amazonaws.com/{2}".format(AWS_BUCKET_NAME, AWS_DEFAULT_REGION, key)
 

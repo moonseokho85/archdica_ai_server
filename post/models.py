@@ -32,6 +32,8 @@ class Materials(models.Model):
     index = models.CharField(max_length=100, blank=False)
     type = models.CharField(max_length=20, blank=False, choices=TYPE_CHOICES)
     url = models.URLField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.index
@@ -41,4 +43,6 @@ class FindSimilarMaterial(models.Model):
     email = models.EmailField(max_length=254, blank=False)
     room_image = models.ImageField(upload_to="images/room/%Y/%m/%d", blank=False)
     type = models.CharField(max_length=20, blank=False, choices=TYPE_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 

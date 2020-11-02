@@ -9,12 +9,12 @@ class ConversionAdmin(admin.ModelAdmin):
 
 @admin.register(Materials)
 class MaterialAdmin(admin.ModelAdmin):
-    list_display = ('brand', 'sub_brand', 'index', 'type', 'url')
+    list_display = ('brand', 'sub_brand', 'index', 'type', 'url', 'created_at', 'updated_at')
 
 
 @admin.register(FindSimilarMaterial)
 class FindSimilarMaterialAdmin(admin.ModelAdmin):
-    list_display = ('email', 'room_image', 'type')
+    list_display = ('email', 'room_image', 'type', 'created_at', 'updated_at')
 
 
 

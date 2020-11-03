@@ -6,6 +6,12 @@ class ConversionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Conversion
         fields = '__all__'
+        example = {
+            'email': 'archdica@example.com',
+            'room_image': 'image.jpg',
+            'type': 'wall',
+            'reference_image': 'reference.jpg',
+        }
 
 
 class MaterialSerializer(serializers.ModelSerializer):

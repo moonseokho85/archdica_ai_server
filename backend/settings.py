@@ -136,6 +136,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+SWAGGER_SETTINGS = {
+    'DEFAULT_AUTO_SCHEMA_CLASS': 'drf_yasg_examples.SwaggerAutoSchema',
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

@@ -51,6 +51,12 @@ class ConvertImageAPIView(APIView):
             요쳥된 이미지를 변환하여 주는 API
 
             ---
+            # input
+                - email : 사용자의 이메일 주소
+                - room_image: 바꾸고 싶은 방의 이미지
+                - type: 바꾸고 싶은 유형(벽 or 바닥)
+                - reference_image: 바꾸고 싶은 재질 이미지
+
             # output
                 - wall_mask_url : 벽의 마스크 이미지
                 - floor_mask_url : 바닥의 마스크 이미지

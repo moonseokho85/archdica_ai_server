@@ -95,11 +95,17 @@ def visualize_mask(data, pred, cfg):
 
         AWS_BUCKET_NAME = "wall-mask"
 
-        filename = os.path.join(BASE_DIR, 'post/SSP/test_result/wall/') + img_name
+        filepath = os.path.join(BASE_DIR, 'post/SSP/test_result/wall/') + img_name
+
+        (filename, file_extension) = os.path.splitext(img_name)
+        if file_extension is not '.png':
+            file_extension = '.png'
+
+        img_name = filename + file_extension
+
         object_name = img_name
 
-        # Todo: upload file through public-access
-        s3.meta.client.upload_file(filename, AWS_BUCKET_NAME, object_name, ExtraArgs={'ACL': 'public-read'})
+        s3.meta.client.upload_file(filepath, AWS_BUCKET_NAME, object_name, ExtraArgs={'ACL': 'public-read'})
 
         object_url = "https://{0}.s3.{1}.amazonaws.com/{2}".format(AWS_BUCKET_NAME, AWS_DEFAULT_REGION, img_name)
         print("object_url: ", object_url)
@@ -108,10 +114,17 @@ def visualize_mask(data, pred, cfg):
 
         AWS_BUCKET_NAME = "floor-mask"
 
-        filename = os.path.join(BASE_DIR, 'post/SSP/test_result/floor/') + img_name
+        filepath = os.path.join(BASE_DIR, 'post/SSP/test_result/floor/') + img_name
+
+        (filename, file_extension) = os.path.splitext(img_name)
+        if file_extension is not '.png':
+            file_extension = '.png'
+
+        img_name = filename + file_extension
+
         object_name = img_name
 
-        s3.meta.client.upload_file(filename, AWS_BUCKET_NAME, object_name, ExtraArgs={'ACL': 'public-read'})
+        s3.meta.client.upload_file(filepath, AWS_BUCKET_NAME, object_name, ExtraArgs={'ACL': 'public-read'})
 
         object_url = "https://{0}.s3.{1}.amazonaws.com/{2}".format(AWS_BUCKET_NAME, AWS_DEFAULT_REGION, img_name)
         print("object_url: ", object_url)
@@ -173,7 +186,6 @@ def test(segmentation_module, loader, gpu):
 
 
 def main(cfg, gpu):
-
     torch.cuda.set_device(gpu)
 
     # Network Builders

@@ -197,12 +197,11 @@ def synthesize(room_image_url, reference_image_url, type):
 
     # final_syn = Image.open(final_syn) # => Image.fromarray()
 
-    # convert ndarray to file-like object for s3
+    # convert ndarray to file-like object for s3 upload
     img = Image.fromarray(final_syn)
     img_obj = BytesIO()
     img.save(img_obj, format="jpeg")
     img_obj.seek(0)
-
 
     # S3 upload
     s3 = boto3.client('s3')

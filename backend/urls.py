@@ -21,6 +21,7 @@ from rest_framework.permissions import AllowAny
 from drf_yasg import openapi
 
 schema_url_v1_patterns = [
+    # git test
     path('api/', include('post.urls')),
 ]
 

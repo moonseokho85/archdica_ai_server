@@ -95,13 +95,34 @@ class ConvertImageAPIView(APIView):
 
 
 class MaterialListCreateAPIView(APIView):
+    """
+        자재 관련 API
+    """
 
     def get(self, request):
+        """
+            자재 리스트를 불러오는 API
+
+            ---
+            # 내용
+                - brand : 브랜드명
+                - sub_brand : 상세 브랜드명
+                - index : 제품 인덱스
+                - type : 제품 유형
+                - url : 제품 이미지 url
+                - created_at : 생성 날짜
+                - updated_at : 수정 날짜
+        """
         materials = Materials.objects.filter(active=True)
         serializer = MaterialSerializer(materials, many=True)
         return Response(serializer.data)
 
     def post(self, request):
+        """
+            자재를 등록하는 API
+
+            ---
+        """
         serializer = MaterialSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()

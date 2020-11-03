@@ -21,17 +21,17 @@ from rest_framework.permissions import AllowAny
 from drf_yasg import openapi
 
 schema_url_v1_patterns = [
-    path('api/', include('post.urls', namespace='conversion_api')),
+    path('api/', include('post.urls')),
 ]
 
 schema_view_conversion = get_schema_view(
     openapi.Info(
-        title="Jay Open API",
+        title="ArchDica API",
         default_version='v1',
-        description="안녕하세요. DeepBuild의 API 문서 페이지 입니다.",
+        description="안녕하세요. ArchDica의 API 문서 페이지 입니다.",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="mseokho7733@google.com"),
-        license=openapi.License(name="DeepBuild"),
+        license=openapi.License(name="ArchDica"),
     ),
     validators=['flex'], #'ssv'],
     public=True,
@@ -44,7 +44,7 @@ urlpatterns = [
     path('api/', include('post.urls')),
 
     # Auto DRF API docs
-        url(r'^swagger(?P<format>\.json|\.yaml)/v1$', schema_view_conversion.without_ui(cache_timeout=0), name='schema-json'),
-        url(r'^swagger/v1/$', schema_view_conversion.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-        url(r'^redoc/v1/$', schema_view_conversion.with_ui('redoc', cache_timeout=0), name='schema-redoc-v1'),
+    url(r'^swagger(?P<format>\.json|\.yaml)/v1$', schema_view_conversion.without_ui(cache_timeout=0), name='schema-json'),
+    url(r'^swagger/v1/$', schema_view_conversion.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    url(r'^redoc/v1/$', schema_view_conversion.with_ui('redoc', cache_timeout=0), name='schema-redoc-v1'),
 ]

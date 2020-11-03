@@ -17,6 +17,17 @@ AWS_DEFAULT_REGION = config('AWS_DEFAULT_REGION')
 
 
 class ConvertImageAPIView(APIView):
+
+    """
+        이미지를 변환해 주는 API
+        ---
+        # 내용
+            - email : 이메일
+            - room_image : 방 이미지
+            - type : 유형(벽 or 바닥)
+            - reference_image : 참조 이미지(벽지 or 바닥재)
+    """
+
     parser_classes = (FormParser, MultiPartParser)
 
     def get(self, request, *args, **kwargs):

@@ -20,6 +20,7 @@ class ConvertImageAPIView(APIView):
 
     """
         이미지를 변환해 주는 API
+
         ---
         # 내용
             - email : 이메일
@@ -31,11 +32,30 @@ class ConvertImageAPIView(APIView):
     parser_classes = (FormParser, MultiPartParser)
 
     def get(self, request, *args, **kwargs):
+        """
+            변환을 요청한 요청 리스트를 불러오는 API
+
+            ---
+            # 내용
+                - email : 이메일
+                - room_image : 방 이미지
+                - type : 유형(벽 or 바닥)
+                - reference_image : 참조 이미지(벽지 or 바닥재)
+        """
         posts = Conversion.objects.all()
         serializer = ConversionSerializer(posts, many=True)
         return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
+        """
+            요쳥된 이미지를 변환하여 주는 API
+
+            ---
+            # output
+                - wall_mask_url : 벽의 마스크 이미지
+                - floor_mask_url : 바닥의 마스크 이미지
+                - conversion_image_url : 변환된 이미지
+        """
         posts_serializer = ConversionSerializer(data=request.data)
         if posts_serializer.is_valid():
             posts_serializer.save()

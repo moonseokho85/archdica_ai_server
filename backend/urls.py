@@ -45,7 +45,7 @@ urlpatterns = [
     path('api/', include('post.urls')),
 
     # Auto DRF API docs
-    url(r'^swagger(?P<format>\.json|\.yaml)/v1$', schema_view_conversion.without_ui(cache_timeout=0), name='schema-json'),
-    url(r'^swagger/v1/$', schema_view_conversion.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    url(r'^redoc/v1/$', schema_view_conversion.with_ui('redoc', cache_timeout=0), name='schema-redoc-v1'),
+    url(r'^swagger(?P<format>\.json|\.yaml)/conversion$', schema_view_conversion.without_ui(cache_timeout=0), name='schema-json'),
+    url(r'^swagger/conversion/$', schema_view_conversion.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    url(r'^redoc/conversion/$', schema_view_conversion.with_ui('redoc', cache_timeout=0), name='schema-redoc-v1'),
 ]

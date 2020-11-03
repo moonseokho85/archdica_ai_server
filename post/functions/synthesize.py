@@ -17,6 +17,12 @@ def synthesize(room_image_url, reference_image_url, type):
 
     # S3 key of image
     key = os.path.basename(room_image_url)
+
+    filename, file_extension = os.path.splitext(key)
+    if file_extension is not '.png':
+        file_extension = '.png'
+
+    key = filename + file_extension
     print("key: ", key)
 
     # Load mask image from S3

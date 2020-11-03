@@ -102,6 +102,7 @@ def visualize_mask(data, pred, cfg):
             file_extension = '.png'
 
         img_name = filename + file_extension
+        print('img_name: ', img_name)
 
         object_name = img_name
 
@@ -121,6 +122,7 @@ def visualize_mask(data, pred, cfg):
             file_extension = '.png'
 
         img_name = filename + file_extension
+        print('img_name: ', img_name)
 
         object_name = img_name
 

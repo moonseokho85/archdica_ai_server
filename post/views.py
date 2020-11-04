@@ -119,7 +119,7 @@ class MaterialListCreateAPIView(APIView):
                 - created_at : 생성 날짜
                 - updated_at : 수정 날짜
         """
-        materials = Materials.objects.filter(active=True)
+        materials = Materials.objects.all()
         serializer = MaterialSerializer(materials, many=True)
         return Response(serializer.data)
 

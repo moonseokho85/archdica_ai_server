@@ -10,6 +10,5 @@ post/SSP/ckpt
 post/SSP/config
 
 .env
-secrets.json
 
 venv

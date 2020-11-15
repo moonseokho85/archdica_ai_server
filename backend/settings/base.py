@@ -190,6 +190,7 @@ if DEBUG:
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 else:
+    print("Working in AWS S3")
     # AWS Configuration
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

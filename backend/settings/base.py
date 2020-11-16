@@ -199,6 +199,8 @@ AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')  # 비밀 액세스 키
 AWS_STORAGE_BUCKET_NAME = "archdica-ai-bucket"  # 버킷 이름
 AWS_S3_CUSTOM_DOMAIN = '%s.s3.%s.amazonaws.com' % (AWS_STORAGE_BUCKET_NAME, AWS_REGION)
 
+AWS_DEFAULT_ACL = 'public-read'
+
 # Static Setting
 AWS_STATIC_LOCATION = 'static'
 STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_STATIC_LOCATION)

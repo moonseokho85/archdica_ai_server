@@ -35,6 +35,7 @@ schema_view_conversion = get_schema_view(
         license=openapi.License(name="ArchDica"),
     ),
     validators=['flex'], #'ssv'],
+    url='https://www.archdica.ml/api/posts/',
     public=True,
     permission_classes=(AllowAny,),
     patterns=schema_url_v1_patterns,

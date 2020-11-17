@@ -7,6 +7,7 @@ import boto3
 from io import BytesIO
 from django.conf import settings
 from urllib.parse import urlparse
+from decouple import config
 
 
 def synthesize(room_image_url, reference_image_url, type):
@@ -14,7 +15,10 @@ def synthesize(room_image_url, reference_image_url, type):
     object_ = type
 
     # S3 client
-    client = boto3.client('s3')
+    client = boto3.client('s3',
+                          aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
+                          aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY'),
+                          region_name=config('AWS_DEFAULT_REGION'))
 
     # S3 key of image
     key = os.path.basename(room_image_url)

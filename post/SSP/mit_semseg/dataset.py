@@ -304,7 +304,10 @@ class TestDataset(BaseDataset):
 
         # img = Image.open(image_path).convert('RGB')
         file_byte_string = s3.get_object(Bucket=bucket, Key=key)['Body'].read()
+        print("file_byte_string: ", file_byte_string)
+
         img = Image.open(BytesIO(file_byte_string)).convert('RGB')
+        print("img: ", img)
 
         # resize image
         img = img.resize((1280, 720))

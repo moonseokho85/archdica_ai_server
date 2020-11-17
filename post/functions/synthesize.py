@@ -55,8 +55,11 @@ def synthesize(room_image_url, reference_image_url, type):
     print("s3 refer key: ", key)
 
     # load refer image from s3
-    file_byte_string = client.get_object(Bucket=bucket, Key=key)['Body'].read()
-    refer = Image.open(BytesIO(file_byte_string))
+    try:
+        file_byte_string = client.get_object(Bucket=bucket, Key=key)['Body'].read()
+        refer = Image.open(BytesIO(file_byte_string))
+    except Exception as e:
+        print("Error: ", e)
 
     # refer = Image.open(reference_image_url)
 

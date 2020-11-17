@@ -10,16 +10,10 @@ from io import BytesIO
 from urllib.parse import urlparse
 
 # s3 config
-s3 = boto3.client('s3',
+client = boto3.client('s3',
                   aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
                   aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY'),
                   region_name=config('AWS_DEFAULT_REGION'))
-response = s3.list_buckets()
-
-# Output the bucket names
-print('Existing buckets:')
-for bucket in response['Buckets']:
-    print(f'  {bucket["Name"]}')
 
 BUCKET_NAME = "archdica-ai-bucket"
 
@@ -305,14 +299,18 @@ class TestDataset(BaseDataset):
         parse_result = urlparse(image_path[1:])
         print("parse_result: ", parse_result)
 
-        KEY = parse_result.path
-        print("s3 key: ", KEY)
+        key = parse_result.path
+        print("s3 key: ", key)
 
         # local path
         # img = Image.open(image_path).convert('RGB')
 
+        # test
+        response = client.get_object(Bucket=BUCKET_NAME, Key=key)
+        print("response: ", response)
+
         # s3 path
-        file_byte_string = s3.get_object(Bucket=BUCKET_NAME, Key=KEY)['Body'].read()
+        file_byte_string = client.get_object(Bucket=BUCKET_NAME, Key=key)['Body'].read()
         print("file_byte_string: ", file_byte_string)
 
         img = Image.open(BytesIO(file_byte_string)).convert('RGB')

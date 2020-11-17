@@ -8,6 +8,11 @@ from decouple import config
 import boto3
 from io import BytesIO
 
+s3 = boto3.client('s3',
+                  aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
+                  aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY'),
+                  region_name=config('AWS_DEFAULT_REGION'))
+
 
 def imresize(im, size, interp='bilinear'):
     if interp == 'nearest':
@@ -338,7 +343,7 @@ class TestDataset(BaseDataset):
         bucket = "archdica-ai-bucket"
 
         # img = Image.open(image_path).convert('RGB')
-        file_byte_string = self.s3.get_object(Bucket=bucket, Key=key)['Body'].read()
+        file_byte_string = s3.get_object(Bucket=bucket, Key=key)['Body'].read()
         img = Image.open(BytesIO(file_byte_string)).convert('RGB')
 
         # resize image

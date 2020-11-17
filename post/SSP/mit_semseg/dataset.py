@@ -303,7 +303,7 @@ class TestDataset(BaseDataset):
         parse_result = urlparse(image_path[1:])
         print("parse_result: ", parse_result)
 
-        key = parse_result.path
+        key = parse_result.path[1:]
         print("s3 key: ", key)
 
         # local path

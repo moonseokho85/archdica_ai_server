@@ -6,6 +6,7 @@ import numpy as np
 import boto3
 from io import BytesIO
 from django.conf import settings
+from urllib.parse import urlparse
 
 
 def synthesize(room_image_url, reference_image_url, type):
@@ -44,11 +45,20 @@ def synthesize(room_image_url, reference_image_url, type):
         return
 
     # Load reference image from S3
-    # bucket = 'archdica-material'
-    #
-    # file_byte_string = client.get_object(Bucket=bucket, Key=key)['Body'].read()
-    # refer = Image.open(BytesIO(file_byte_string))
-    refer = Image.open(reference_image_url)
+    bucket = 'archdica-material'
+
+    # s3 config
+    parse_result = urlparse(reference_image_url[1:])
+    print("parse_result: ", parse_result)
+
+    key = parse_result.path[1:]
+    print("s3 refer key: ", key)
+
+    # load refer image from s3
+    file_byte_string = client.get_object(Bucket=bucket, Key=key)['Body'].read()
+    refer = Image.open(BytesIO(file_byte_string))
+
+    # refer = Image.open(reference_image_url)
 
     org, mask_img = np.split(np.array(image), 2, axis=1)
     # print(org.shape, mask_img.shape)

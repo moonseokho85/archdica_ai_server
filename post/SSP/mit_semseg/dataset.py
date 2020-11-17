@@ -299,7 +299,7 @@ class TestDataset(BaseDataset):
         parse_result = urlparse(image_path[1:])
         print("parse_result: ", parse_result)
 
-        key = os.path.basename(parse_result.path)
+        key = parse_result.path
         print("s3 key: ", key)
 
         # img = Image.open(image_path).convert('RGB')

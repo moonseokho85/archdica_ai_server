@@ -17,10 +17,6 @@ client = boto3.client('s3',
 
 BUCKET_NAME = "archdica-ai-bucket"
 
-# test checking keys
-for key in client.list_objects(Bucket=BUCKET_NAME)['Contents']:
-    print(key['Key'])
-
 
 def imresize(im, size, interp='bilinear'):
     if interp == 'nearest':

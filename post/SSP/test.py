@@ -3,7 +3,6 @@ import os, json
 import argparse
 from pathlib import Path
 from distutils.version import LooseVersion
-from django.core.exceptions import ImproperlyConfigured
 import environ
 from decouple import config
 

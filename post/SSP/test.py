@@ -1,9 +1,8 @@
 # System libs
-import os, json
+import os
 import argparse
 from pathlib import Path
 from distutils.version import LooseVersion
-import environ
 from decouple import config
 
 # Numerical libs
@@ -26,10 +25,6 @@ from mit_semseg.config import cfg
 
 # AWS S3
 import boto3
-
-# Todo: delete code about environ
-env = environ.Env()  # defining env variable
-environ.Env.read_env()  # reading .env file
 
 
 def visualize_result(data, pred, cfg):

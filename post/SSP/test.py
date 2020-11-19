@@ -3,7 +3,6 @@ import os
 import argparse
 from pathlib import Path
 from distutils.version import LooseVersion
-from decouple import config
 
 # Numerical libs
 import numpy as np
@@ -81,7 +80,7 @@ def visualize_mask(data, pred, cfg):
 
     # Upload through S3
     BASE_DIR = Path(__file__).resolve().parent.parent.parent
-    AWS_DEFAULT_REGION = config('AWS_DEFAULT_REGION')
+    AWS_DEFAULT_REGION = "ap-northeast-2"
 
     s3 = boto3.resource('s3')
 

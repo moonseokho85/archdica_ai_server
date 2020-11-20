@@ -297,24 +297,19 @@ class TestDataset(BaseDataset):
 
         # s3 config
         parse_result = urlparse(image_path[1:])
-        print("parse_result: ", parse_result)
 
         key = parse_result.path[1:]
-        print("s3 key: ", key)
 
         # local path
         # img = Image.open(image_path).convert('RGB')
 
         # test
         response = client.get_object(Bucket=BUCKET_NAME, Key=key)
-        print("response: ", response)
 
         # s3 path
         file_byte_string = client.get_object(Bucket=BUCKET_NAME, Key=key)['Body'].read()
-        print("file_byte_string: ", file_byte_string)
 
         img = Image.open(BytesIO(file_byte_string)).convert('RGB')
-        print("img: ", img)
 
         # resize image
         img = img.resize((1280, 720))

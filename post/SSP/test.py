@@ -93,7 +93,6 @@ def visualize_mask(data, pred, cfg):
             file_extension = '.png'
 
         img_name = filename + file_extension
-        print('img_name: ', img_name)
 
         filepath = os.path.join(BASE_DIR, 'post/SSP/test_result/wall/') + img_name
         object_name = img_name
@@ -101,7 +100,6 @@ def visualize_mask(data, pred, cfg):
         s3.meta.client.upload_file(filepath, AWS_BUCKET_NAME, object_name, ExtraArgs={'ACL': 'public-read'})
 
         object_url = "https://{0}.s3.{1}.amazonaws.com/{2}".format(AWS_BUCKET_NAME, AWS_DEFAULT_REGION, img_name)
-        print("object_url: ", object_url)
 
     elif cfg.TEST.result == './post/SSP/test_result/floor/':
 
@@ -112,7 +110,6 @@ def visualize_mask(data, pred, cfg):
             file_extension = '.png'
 
         img_name = filename + file_extension
-        print('img_name: ', img_name)
 
         filepath = os.path.join(BASE_DIR, 'post/SSP/test_result/floor/') + img_name
         object_name = img_name
@@ -120,7 +117,6 @@ def visualize_mask(data, pred, cfg):
         s3.meta.client.upload_file(filepath, AWS_BUCKET_NAME, object_name, ExtraArgs={'ACL': 'public-read'})
 
         object_url = "https://{0}.s3.{1}.amazonaws.com/{2}".format(AWS_BUCKET_NAME, AWS_DEFAULT_REGION, img_name)
-        print("object_url: ", object_url)
 
     else:
         return
@@ -134,8 +130,6 @@ def test(segmentation_module, loader, gpu):
 
         # process data
         batch_data = batch_data[0]
-        print("batch_data: ", batch_data)
-        print("type of batch_data: ", type(batch_data))
 
         segSize = (batch_data['img_ori'].shape[0], batch_data['img_ori'].shape[1])
         img_resized_list = batch_data['img_data']

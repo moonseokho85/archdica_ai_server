@@ -49,7 +49,7 @@ def synthesize(room_image_url, reference_image_url, type):
         return
 
     # Load reference image from S3
-    bucket = 'archdica-ai-bucket'
+    bucket = 'archdica-material'
 
     # s3 config
     parse_result = urlparse(reference_image_url[1:])

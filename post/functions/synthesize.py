@@ -66,6 +66,9 @@ def synthesize(org_image, refer_image, type, scale_factor=None, show_img=False):
         #       Mask Part         #
         org_color_np, org_np = np.split(np.asarray(org_image), 2, axis=1)
 
+        print("shape of org_color_np: ", org_color_np.shape)
+        print("shape of org_np: ", org_np.shape)
+
         # plt.subplot(131)
         # plt.imshow(org)
         # plt.show()

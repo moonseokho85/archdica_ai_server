@@ -35,7 +35,7 @@ def synthesize(org_image, refer_image, type, scale_factor=None, show_img=False):
                               region_name=config('AWS_DEFAULT_REGION'))
 
         # S3 key of image
-        key = os.path.basename(room_image_url)
+        key = os.path.basename(org_image)
 
         filename, file_extension = os.path.splitext(key)
         if file_extension is not '.png':

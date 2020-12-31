@@ -8,6 +8,7 @@ from io import BytesIO
 from django.conf import settings
 from urllib.parse import urlparse
 from decouple import config
+import time
 
 #     Refering for one image data   #
 def synthesize(org_image, refer_image, type, scale_factor=None, show_img=False):

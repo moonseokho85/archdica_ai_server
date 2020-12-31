@@ -74,7 +74,7 @@ def synthesize(org_image, refer_image, type, scale_factor=None, show_img=False):
         bucket = 'archdica-material'
 
         # s3 config
-        parse_result = urlparse(reference_image_url[1:])
+        parse_result = urlparse(refer_image[1:])
         print("parse_result: ", parse_result)
 
         key = parse_result.path[1:]

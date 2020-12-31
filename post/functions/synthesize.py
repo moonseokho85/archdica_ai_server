@@ -1,7 +1,7 @@
 import os
 import cv2
 import numpy as np
-from PIl import Image
+from PIL import Image
 from .pytorch_room_layout.XiaohuLuVPDetection.lu_vp_detect.vp_detection import VPDetection
 import boto3
 from io import BytesIO

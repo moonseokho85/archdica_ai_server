@@ -12,6 +12,9 @@ import time
 
 #     Refering for one image data   #
 def synthesize(org_image, refer_image, type, scale_factor=None, show_img=False):
+
+    room_image_url = org_image
+
     try:
         object_ = type
 
@@ -519,7 +522,7 @@ def synthesize(org_image, refer_image, type, scale_factor=None, show_img=False):
         AWS_BUCKET_NAME = 'archdica-conversion'
         AWS_DEFAULT_REGION = settings.AWS_REGION
 
-        key = os.path.basename(room_image)
+        key = os.path.basename(room_image_url)
 
         s3.upload_fileobj(img_obj, AWS_BUCKET_NAME, key, ExtraArgs={'ACL': 'public-read'})
 

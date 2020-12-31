@@ -95,8 +95,9 @@ def synthesize(org_image, refer_image, type, scale_factor=None, show_img=False):
         refer = np.asarray(refer_image)
         print("shape of refer: ", refer.shape)
 
-        if len(refer.shape) == 4:
+        if refer.shpae[2] > 3:
             refer = refer[:, :, :3]
+        print("converted shape of refer: ", refer.shape)
 
         #     refer_size와 img_size가 동일하거나 refer_size가 작은 경우를 고려해야한다.     #
         print('scale_factor :', scale_factor)

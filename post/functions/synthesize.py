@@ -11,83 +11,81 @@ from decouple import config
 
 #     Refering for one image data   #
 def synthesize(org_image, refer_image, type, scale_factor=None, show_img=False):
-
-    object_ = type
-
-    length_thresh = 70
-    principal_point = None
-    focal_length = 1300  # 1102.79
-    seed = 1300
-
-    vpd = VPDetection(length_thresh, principal_point, focal_length, seed)
-
-    #       Layout Part       #
-    # img = Image.open(layout_path + image)
-    # # print(type(img))
-    # img_np = np.invert(np.asarray(img))
-    # # print(img_np.max(), img_np.min())
-    # ret, thr = cv2.threshold(img_np, 254, 255, cv2.THRESH_BINARY_INV)
-
-    # S3 client
-    client = boto3.client('s3',
-                          aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
-                          aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY'),
-                          region_name=config('AWS_DEFAULT_REGION'))
-
-    # S3 key of image
-    key = os.path.basename(room_image_url)
-
-    filename, file_extension = os.path.splitext(key)
-    if file_extension is not '.png':
-        file_extension = '.png'
-
-    key = filename + file_extension
-    print("key: ", key)
-
-    # Load mask image from S3
-    if object_ == "wall":
-
-        bucket = 'wall-mask'
-
-        file_byte_string = client.get_object(Bucket=bucket, Key=key)['Body'].read()
-        org_image = Image.open(BytesIO(file_byte_string))
-
-    elif object_ == "floor":
-
-        bucket = 'floor-mask'
-
-        file_byte_string = client.get_object(Bucket=bucket, Key=key)['Body'].read()
-        org_image = Image.open(BytesIO(file_byte_string))
-
-    else:
-        return
-
-    #       Mask Part         #
-    org_color_np, org_np = np.split(np.asarray(org_image), 2, axis=1)
-
-    # plt.subplot(131)
-    # plt.imshow(org)
-    # plt.show()
-    img_size = (org_np.shape[1], org_np.shape[0])
-
-    # Load reference image from S3
-    bucket = 'archdica-material'
-
-    # s3 config
-    parse_result = urlparse(reference_image_url[1:])
-    print("parse_result: ", parse_result)
-
-    key = parse_result.path[1:]
-    print("s3 refer key: ", key)
-
-    # load refer image from s3
     try:
-        file_byte_string = client.get_object(Bucket=bucket, Key=key)['Body'].read()
-        refer_image = Image.open(BytesIO(file_byte_string))
-    except Exception as e:
-        print("Error: ", e)
+        object_ = type
 
-    try:
+        length_thresh = 70
+        principal_point = None
+        focal_length = 1300  # 1102.79
+        seed = 1300
+
+        vpd = VPDetection(length_thresh, principal_point, focal_length, seed)
+
+        #       Layout Part       #
+        # img = Image.open(layout_path + image)
+        # # print(type(img))
+        # img_np = np.invert(np.asarray(img))
+        # # print(img_np.max(), img_np.min())
+        # ret, thr = cv2.threshold(img_np, 254, 255, cv2.THRESH_BINARY_INV)
+
+        # S3 client
+        client = boto3.client('s3',
+                              aws_access_key_id=config('AWS_ACCESS_KEY_ID'),
+                              aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY'),
+                              region_name=config('AWS_DEFAULT_REGION'))
+
+        # S3 key of image
+        key = os.path.basename(room_image_url)
+
+        filename, file_extension = os.path.splitext(key)
+        if file_extension is not '.png':
+            file_extension = '.png'
+
+        key = filename + file_extension
+        print("key: ", key)
+
+        # Load mask image from S3
+        if object_ == "wall":
+
+            bucket = 'wall-mask'
+
+            file_byte_string = client.get_object(Bucket=bucket, Key=key)['Body'].read()
+            org_image = Image.open(BytesIO(file_byte_string))
+
+        elif object_ == "floor":
+
+            bucket = 'floor-mask'
+
+            file_byte_string = client.get_object(Bucket=bucket, Key=key)['Body'].read()
+            org_image = Image.open(BytesIO(file_byte_string))
+
+        else:
+            return
+
+        #       Mask Part         #
+        org_color_np, org_np = np.split(np.asarray(org_image), 2, axis=1)
+
+        # plt.subplot(131)
+        # plt.imshow(org)
+        # plt.show()
+        img_size = (org_np.shape[1], org_np.shape[0])
+
+        # Load reference image from S3
+        bucket = 'archdica-material'
+
+        # s3 config
+        parse_result = urlparse(reference_image_url[1:])
+        print("parse_result: ", parse_result)
+
+        key = parse_result.path[1:]
+        print("s3 refer key: ", key)
+
+        # load refer image from s3
+        try:
+            file_byte_string = client.get_object(Bucket=bucket, Key=key)['Body'].read()
+            refer_image = Image.open(BytesIO(file_byte_string))
+        except Exception as e:
+            print("Error: ", e)
 
         # refer = Image.open(refer_path)
         refer = np.asarray(refer_image)

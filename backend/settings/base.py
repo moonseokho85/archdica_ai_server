@@ -63,6 +63,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True  # This enables all API requests from a different server to be allowed.
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'backend.urls'
 

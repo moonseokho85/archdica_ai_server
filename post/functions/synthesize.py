@@ -519,7 +519,7 @@ def synthesize(org_image, refer_image, type, scale_factor=None, show_img=False):
         AWS_BUCKET_NAME = 'archdica-conversion'
         AWS_DEFAULT_REGION = settings.AWS_REGION
 
-        key = os.path.basename(room_image_url)
+        key = os.path.basename(room_image)
 
         s3.upload_fileobj(img_obj, AWS_BUCKET_NAME, key, ExtraArgs={'ACL': 'public-read'})
 

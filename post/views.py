@@ -87,15 +87,21 @@ class ConvertImageAPIView(APIView):
             # Synthesize room image and material image
             conversion_image_url = synthesize(room_image_url, reference_image_url,
                                               posts_serializer.validated_data['type'])
+            print("conversion_image_url: ", conversion_image_url)
 
             newdict = {
                 'conversion_image_url': conversion_image_url,
                 'wall_mask_url': wall_mask_url,
                 'floor_mask_url': floor_mask_url
             }
-            newdict.update(posts_serializer.data)  # update previous data
+            print("newdict: ", newdict)
 
-            return Response(newdict, status=status.HTTP_201_CREATED)
+            try:
+                newdict.update(posts_serializer.data)  # update previous data
+                return Response(newdict, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                print('Error: ', e)
+
         else:
             print('Error: ', posts_serializer.errors)
             return Response(posts_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

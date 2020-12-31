@@ -150,92 +150,95 @@ def synthesize(room_image_url, reference_image_url, type):
     # plt.show()
     # break
     print('mask_img.shape :', mask_img.shape)
-    mask_img = mask_img / 255.
+    try:
+        mask_img = mask_img / 255.
 
-    #     1.wall_mask * reference color image + (1 - wall_mask) * original_image)    #
-    syn_ = mask_img * (refer) + (1 - mask_img) * org
-    syn = mask_img * syn_ + (1 - mask_img) * org
+        #     1.wall_mask * reference color image + (1 - wall_mask) * original_image)    #
+        syn_ = mask_img * (refer) + (1 - mask_img) * org
+        syn = mask_img * syn_ + (1 - mask_img) * org
 
-    # syn = mask_img * (0.5 * np.array(refer) + 0.5 * org) + (1 - mask_img) * org
-    # print(syn.max(), syn.min())
-    # print(syn.shape)
+        # syn = mask_img * (0.5 * np.array(refer) + 0.5 * org) + (1 - mask_img) * org
+        # print(syn.max(), syn.min())
+        # print(syn.shape)
 
-    #       Brightness Reservation      #
-    #     2.1st result's hsv('value') channel = w * wall_mask * reference hsv('value') + (1 - w) * (1 - wall_mask) * 1st hsv('value')
-    org_hsv = cv2.cvtColor(np.uint8(org), cv2.COLOR_RGB2HSV)
-    refer_hsv = cv2.cvtColor(np.uint8(refer), cv2.COLOR_RGB2HSV)
-    syn_hsv = cv2.cvtColor(np.uint8(syn), cv2.COLOR_RGB2HSV)
+        #       Brightness Reservation      #
+        #     2.1st result's hsv('value') channel = w * wall_mask * reference hsv('value') + (1 - w) * (1 - wall_mask) * 1st hsv('value')
+        org_hsv = cv2.cvtColor(np.uint8(org), cv2.COLOR_RGB2HSV)
+        refer_hsv = cv2.cvtColor(np.uint8(refer), cv2.COLOR_RGB2HSV)
+        syn_hsv = cv2.cvtColor(np.uint8(syn), cv2.COLOR_RGB2HSV)
 
-    hsv_added = cv2.addWeighted(org, 0.7, org_hsv, 0.3, 0)
-    kernel_size, low_threshold, high_threshold = 5, 0, 150
-    hsv_added = cv2.GaussianBlur(hsv_added, (kernel_size, kernel_size), 0)
-    hsv_added = cv2.Canny(hsv_added, low_threshold, high_threshold)
-    hsv_added = np.invert(hsv_added)
+        hsv_added = cv2.addWeighted(org, 0.7, org_hsv, 0.3, 0)
+        kernel_size, low_threshold, high_threshold = 5, 0, 150
+        hsv_added = cv2.GaussianBlur(hsv_added, (kernel_size, kernel_size), 0)
+        hsv_added = cv2.Canny(hsv_added, low_threshold, high_threshold)
+        hsv_added = np.invert(hsv_added)
 
-    # plt.imshow(hsv_added)
-    # plt.show()
+        # plt.imshow(hsv_added)
+        # plt.show()
 
-    org_h, org_s, org_v = cv2.split(org_hsv)
-    refer_h, refer_s, refer_v = cv2.split(refer_hsv)
-    syn_h, syn_s, syn_v = cv2.split(syn_hsv)
+        org_h, org_s, org_v = cv2.split(org_hsv)
+        refer_h, refer_s, refer_v = cv2.split(refer_hsv)
+        syn_h, syn_s, syn_v = cv2.split(syn_hsv)
 
-    # mask_img = cv2.cvtColor(np.uint8(mask_img), cv2.COLOR_RGB2GRAY)
-    # print(mask_img.shape)
-    # print(refer_v.shape)
-    # print(syn_v.shape)
-    # final_syn_hsv = cv2.merge([syn_h, syn_s, syn_v])
-    # plt.imshow(np.hstack((syn_h, syn_s, syn_v)))
-    # plt.show()
-    # plt.imshow(np.hstack((org_h, org_s, org_v)))
+        # mask_img = cv2.cvtColor(np.uint8(mask_img), cv2.COLOR_RGB2GRAY)
+        # print(mask_img.shape)
+        # print(refer_v.shape)
+        # print(syn_v.shape)
+        # final_syn_hsv = cv2.merge([syn_h, syn_s, syn_v])
+        # plt.imshow(np.hstack((syn_h, syn_s, syn_v)))
+        # plt.show()
+        # plt.imshow(np.hstack((org_h, org_s, org_v)))
 
-    w = .5
-    # print(syn_v.min(), syn_v.max())
-    # syn_v = w * mask_img * refer_v + (1 - w) * (1 - mask_img) * org_v
-    prev_syn_v = syn_v.copy()
-    syn_v_im = w * syn_v + (1 - w) * org_v
-    syn_v = w * syn_v_im + (1 - w) * org_v
-    # syn_v = mask_img * syn_v * k + (1 - mask_img) * org_v
-    syn_v = syn_v.astype(np.uint8)
-    # print(syn_v.min(), syn_v.max())
+        w = .5
+        # print(syn_v.min(), syn_v.max())
+        # syn_v = w * mask_img * refer_v + (1 - w) * (1 - mask_img) * org_v
+        prev_syn_v = syn_v.copy()
+        syn_v_im = w * syn_v + (1 - w) * org_v
+        syn_v = w * syn_v_im + (1 - w) * org_v
+        # syn_v = mask_img * syn_v * k + (1 - mask_img) * org_v
+        syn_v = syn_v.astype(np.uint8)
+        # print(syn_v.min(), syn_v.max())
 
-    # prev_syn_h = syn_h.copy()
-    # syn_h = w * syn_h + (1 - w) * org_h
-    # syn_h = syn_h.astype(np.uint8)
+        # prev_syn_h = syn_h.copy()
+        # syn_h = w * syn_h + (1 - w) * org_h
+        # syn_h = syn_h.astype(np.uint8)
 
-    # syn_s = w * syn_s + (1 - w) * org_s
-    # syn_s = syn_s.astype(np.uint8)
+        # syn_s = w * syn_s + (1 - w) * org_s
+        # syn_s = syn_s.astype(np.uint8)
 
-    # prev_syn_s = syn_s.copy()
-    # syn_s = w * syn_s + (1 - w) * org_s
-    # syn_s = syn_s.astype(np.uint8)
+        # prev_syn_s = syn_s.copy()
+        # syn_s = w * syn_s + (1 - w) * org_s
+        # syn_s = syn_s.astype(np.uint8)
 
-    # print(syn_h.dtype)
-    # print(syn_s.dtype)
-    # print(syn_v.dtype)
-    im_syn_hsv = cv2.merge([syn_h, syn_s, syn_v_im.astype(np.uint8)])
-    im_syn = cv2.cvtColor(im_syn_hsv, cv2.COLOR_HSV2RGB)
+        # print(syn_h.dtype)
+        # print(syn_s.dtype)
+        # print(syn_v.dtype)
+        im_syn_hsv = cv2.merge([syn_h, syn_s, syn_v_im.astype(np.uint8)])
+        im_syn = cv2.cvtColor(im_syn_hsv, cv2.COLOR_HSV2RGB)
 
-    final_syn_hsv = cv2.merge([syn_h, syn_s, syn_v])
-    final_syn = cv2.cvtColor(final_syn_hsv, cv2.COLOR_HSV2RGB)
+        final_syn_hsv = cv2.merge([syn_h, syn_s, syn_v])
+        final_syn = cv2.cvtColor(final_syn_hsv, cv2.COLOR_HSV2RGB)
 
-    # final_syn = Image.open(final_syn) # => Image.fromarray()
+        # final_syn = Image.open(final_syn) # => Image.fromarray()
 
-    # convert ndarray to file-like object for s3 upload
-    img = Image.fromarray(final_syn)
-    img_obj = BytesIO()
-    img.save(img_obj, format="jpeg")
-    img_obj.seek(0)
+        # convert ndarray to file-like object for s3 upload
+        img = Image.fromarray(final_syn)
+        img_obj = BytesIO()
+        img.save(img_obj, format="jpeg")
+        img_obj.seek(0)
 
-    # S3 upload
-    s3 = boto3.client('s3')
+        # S3 upload
+        s3 = boto3.client('s3')
 
-    AWS_BUCKET_NAME = 'archdica-conversion'
-    AWS_DEFAULT_REGION = settings.AWS_REGION
+        AWS_BUCKET_NAME = 'archdica-conversion'
+        AWS_DEFAULT_REGION = settings.AWS_REGION
 
-    key = os.path.basename(room_image_url)
+        key = os.path.basename(room_image_url)
 
-    s3.upload_fileobj(img_obj, AWS_BUCKET_NAME, key, ExtraArgs={'ACL': 'public-read'})
+        s3.upload_fileobj(img_obj, AWS_BUCKET_NAME, key, ExtraArgs={'ACL': 'public-read'})
 
-    object_url = "https://{0}.s3.{1}.amazonaws.com/{2}".format(AWS_BUCKET_NAME, AWS_DEFAULT_REGION, key)
+        object_url = "https://{0}.s3.{1}.amazonaws.com/{2}".format(AWS_BUCKET_NAME, AWS_DEFAULT_REGION, key)
+    except Exception as e:
+        print("Error: ", e)
 
     return object_url

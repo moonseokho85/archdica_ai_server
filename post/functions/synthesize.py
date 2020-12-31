@@ -93,7 +93,7 @@ def synthesize(org_image, refer_image, type, scale_factor=None, show_img=False):
 
         # refer = Image.open(refer_path)
         refer = np.asarray(refer_image)
-        print("shape of refer: ", refer.shpae)
+        print("shape of refer: ", refer.shape)
 
         #     refer_size와 img_size가 동일하거나 refer_size가 작은 경우를 고려해야한다.     #
         print('scale_factor :', scale_factor)

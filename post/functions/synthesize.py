@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from PIL import Image
 from .pytorch_room_layout.XiaohuLuVPDetection.lu_vp_detect.vp_detection import VPDetection
+from .pytorch_room_layout import *
 import boto3
 from io import BytesIO
 from django.conf import settings

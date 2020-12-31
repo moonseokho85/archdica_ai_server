@@ -916,3 +916,382 @@ def refering(org_np, layout_np, refer_np):
     return black_plane2
 
 
+#             Detect Intersection             #
+import math
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.cluster import KMeans
+from sympy import Line
+from sympy.geometry import Ray
+
+
+def drawLines(img, lines, color=(255, 255, 255)):
+    """
+    Draw lines on an image
+    """
+    for line in lines:
+        for rho, theta in line:
+            a = np.cos(theta)
+            b = np.sin(theta)
+            x0 = a * rho
+            y0 = b * rho
+            x1 = int(x0 + 1000 * (-b))
+            y1 = int(y0 + 1000 * (a))
+            x2 = int(x0 - 1000 * (-b))
+            y2 = int(y0 - 1000 * (a))
+
+            slope = (y1 - y0) / float(x1 - x0)
+            angle = math.degrees(math.atan(slope))
+            # if abs(angle) < 70:
+            cv2.line(img, (x1, y1), (x2, y2), color, 1)
+
+
+def line(p1, p2):
+    A = (p1[1] - p2[1])
+    B = (p2[0] - p1[0])
+    C = (p1[0] * p2[1] - p2[0] * p1[1])
+    return A, B, -C
+
+
+def intersection2(L1, L2):
+    D = L1[0] * L2[1] - L1[1] * L2[0]
+    Dx = L1[2] * L2[1] - L1[1] * L2[2]
+    Dy = L1[0] * L2[2] - L1[2] * L2[0]
+    if D != 0:
+        x = Dx / D
+        y = Dy / D
+        return x, y
+    else:
+        return False
+
+
+def regression(img, x, y, color=(255, 0, 0), axis=1):
+    if axis == 1:
+        y_at_border = np.array([0, img.shape[0]])
+        p = np.polyfit(y, x, deg=1)
+        x_at_border = np.poly1d(p)(y_at_border)
+    else:
+        x_at_border = np.array([0, img.shape[1]])
+        p = np.polyfit(x, y, deg=1)
+        y_at_border = np.poly1d(p)(x_at_border)
+
+    cv2.line(img, (int(x_at_border[0]), int(y_at_border[0])), (int(x_at_border[1]), int(y_at_border[1])), color, 2)
+
+    return x_at_border, y_at_border
+
+
+def find_reg_points(img, lines, color=(255, 0, 0), drawlines=False):
+    centroids = list()
+    r_xs = list()
+    r_ys = list()
+    for line_ in lines:
+        for rho, theta in line_:
+            a = np.cos(theta)
+            b = np.sin(theta)
+            x0 = a * rho
+            y0 = b * rho
+            x1 = int(x0 + 1000 * (-b))
+            y1 = int(y0 + 1000 * (a))
+            x2 = int(x0 - 1000 * (-b))
+            y2 = int(y0 - 1000 * (a))
+
+            slope = (y1 - y0) / float(x1 - x0)
+            angle = math.degrees(math.atan(slope))
+            if abs(angle) > 80:
+                # print(img.shape[1])
+                h_layout = line((0, 0), (img.shape[1], 0))
+                h_layout_lower = line((0, img.shape[0]), (img.shape[1], img.shape[0]))
+                r = intersection2(h_layout, line((x1, y1), (x2, y2)))
+                r_lower = intersection2(h_layout_lower, line((x1, y1), (x2, y2)))
+                # cv2.line(img, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
+
+                center_p = (int((r[0] + r_lower[0]) / 2), int((r[1] + r_lower[1]) / 2))
+                centroids.append(center_p)
+
+                r_xs.append((r[0], r_lower[0]))
+                r_ys.append((r[1], r_lower[1]))
+
+                if drawlines:
+                    cv2.line(img, (int(r[0]), int(r[1])), (int(r_lower[0]), int(r_lower[1])), color, 2)
+                    cv2.circle(img, center_p, 10, (255, 0, 255), -1)
+
+    if drawlines:
+        cv2.line(img, (int(0), int(0)), (int(0), int(img.shape[0])), color, 2)
+        cv2.line(img, (int(img.shape[1]), int(0)), (int(img.shape[1]), int(img.shape[0])), color, 2)
+        cv2.circle(img, (0, int(img.shape[0] / 2)), 10, (255, 0, 255), -1)
+        cv2.circle(img, (img.shape[1], int(img.shape[0] / 2)), 10, (255, 0, 255), -1)
+    centroids.append((0, int(img.shape[0] / 2)))
+    centroids.append((img.shape[1], int(img.shape[0] / 2)))
+
+    return r_xs, r_ys, centroids
+
+
+from scipy.spatial import distance as sci_dist
+
+
+def order_points(pts):
+    xSorted = pts[np.argsort(pts[:, 0]), :]
+    leftMost = xSorted[:2, :]
+    rightMost = xSorted[2:, :]
+    leftMost = leftMost[np.argsort(leftMost[:, 1]), :]
+    (tl, bl) = leftMost
+    D = sci_dist.cdist(tl[np.newaxis], rightMost, "euclidean")[0]
+    (br, tr) = rightMost[np.argsort(D)[::-1], :]
+
+    return np.array([tl, tr, br, bl], dtype="float32")
+
+
+def get_vline_points_inborder(vpd, img, show_vline=False):
+    vpd.find_vps(img)
+    # vps = vpd.vps_2D
+    vl_img, vl_list = vpd.create_debug_VP_image(show_vl=True)
+
+    vl_list_for_vline = vl_list
+    vl_img_for_vline = vl_img.copy()
+
+    # print('#       Used vl_list for vline work       #')
+    # print('vl_list')
+    # print()
+
+    #           Extract Vertical line            #
+    h_border = Line((0, 0), (img.shape[1], 0))
+    h_border_lower = Line((0, img.shape[0]), (img.shape[1], img.shape[0]))
+
+    reg_xs = list()
+    reg_ys = list()
+    v_lines = list()
+    # h_lines_xrange = list()
+    for vl in vl_list_for_vline:
+        x0, y0, x1, y1 = vl
+        slope = (y1 - y0) / float(x1 - x0)
+        angle = math.degrees(math.atan(slope))
+        # print(angle)
+        if abs(angle) > 80:
+            # cv2.line(skl_copy, (int(x1), int(y1)), (int(x0), int(y0)), (255, 0, 0), 3,
+            #                  cv2.LINE_AA)
+            v_line = Line((x0, y0), (x1, y1))
+            [top_point] = v_line.intersection(h_border)
+            [bot_point] = v_line.intersection(h_border_lower)
+            # v_lines.append()
+            reg_xs.append((float(top_point[0]), float(bot_point[0])))
+            reg_ys.append((float(top_point[1]), float(bot_point[1])))
+
+        # if abs(angle) < 70:
+        #   h_lines_xrange.append((min(x0, x1), max(x0, x1)))
+
+    # print('#        Before Sorting      #')
+    # print('reg_xs :', reg_xs)
+
+    center_xs = list()
+    for reg_x, reg_y in zip(reg_xs, reg_ys):
+        center_xs.append(np.mean(reg_x))
+        #           Draw Line         #
+        regression(vl_img_for_vline, reg_x, reg_y)
+
+    if show_vline:
+        plt.imshow(vl_img_for_vline)
+        plt.title('Divided Session')
+        plt.show()
+
+    sorted_index = list()
+    sorted_center_xs = sorted(center_xs)
+
+    for center_x in sorted_center_xs:
+        # print('center_x :', center_x)
+        sorted_index.append(center_xs.index(center_x))
+    print('sorted_index :', sorted_index)  #
+
+    sorted_reg_xs = list()
+    sorted_reg_ys = list()
+    for s_index in sorted_index:
+        sorted_reg_xs.append(reg_xs[s_index])
+        sorted_reg_ys.append(reg_ys[s_index])
+    reg_xs = sorted_reg_xs
+    reg_ys = sorted_reg_ys
+
+    print()
+    # print("#        After Sorting       #")
+    # print('reg_xs :', reg_xs)
+    # print()
+
+    return reg_xs
+
+
+def remove_outlier_angle(vl_list, copy_vl_list, angle_list, limit_angle=15):
+    if len(vl_list) != 0:
+        copy_angle_list = angle_list.copy()
+        mean_angle_list = np.array(angle_list).mean()
+        # print('mean_angle_list :', mean_angle_list)
+        # print('angle_list :', angle_list)
+        print('max angle_list gap : ', max(angle_list) - mean_angle_list)
+
+        for angle_index, angle in enumerate(copy_angle_list):
+            if abs(angle - mean_angle_list) > limit_angle:
+                vl_list.remove(copy_vl_list[angle_index])
+                # angle_list.remove(copy_angle_list[angle_index])
+
+        return
+
+
+def get_hline_points_inborder(img, left_border, right_border, vl_list, top_vl, bot_vl, top_down_ratio=0.66):
+    ex_top_vl = list()
+    ex_bot_vl = list()
+
+    for vl in vl_list:
+
+        x0, y0, x1, y1 = vl
+        l1 = Line((x0, y0), (x1, y1))
+        #     v_border line     #
+        [left_point] = l1.intersection(left_border)
+        # print('left_point :', left_point)
+        [right_point] = l1.intersection(right_border)
+
+        #      Figure out current vl is top / bottom vl     #
+        if vl in top_vl:
+            if (left_point[1] < img.shape[0] * top_down_ratio and right_point[1] < img.shape[0] * top_down_ratio):
+                ex_top_vl.append((left_point[0], left_point[1], right_point[0], right_point[1]))
+
+        elif vl in bot_vl:
+            if (left_point[1] > img.shape[0] * (1 - top_down_ratio) and right_point[1] > img.shape[0] * (
+                    1 - top_down_ratio)):
+                ex_bot_vl.append((left_point[0], left_point[1], right_point[0], right_point[1]))
+
+    return ex_top_vl, ex_bot_vl
+
+
+def toppest_bottest_vl(img, top_vl, bot_vl, direction):
+    max_y = 0
+    min_y = img.shape[0]
+    toppest_vl = None
+    bottest_vl = None
+    index = 1 if direction == 'right' else 3
+
+    for vl in top_vl:
+        if vl[index] < min_y:
+            toppest_vl = vl
+            min_y = vl[index]
+
+    for vl in bot_vl:
+        if vl[index] > max_y:
+            bottest_vl = vl
+            max_y = vl[index]
+
+    return toppest_vl, bottest_vl
+
+
+def line_mirroring(src_vl, src_point, left_border, right_border):
+    x0, y0, x1, y1 = src_vl
+    slope = (y1 - y0) / float(x1 - x0)
+    angle = - math.degrees(math.atan(slope))
+
+    #       white_max_y 를 - toppest_vl angle 로 지나는 직선      #
+    print('src_point :', src_point)
+    print('angle :', angle)
+    endy = 100 * math.sin(math.radians(angle))
+    endx = 100 * math.cos(math.radians(angle))
+    temp_vl = Line(src_point, (src_point[0] + endx, src_point[1] + endy))
+    [left_point] = temp_vl.intersection(left_border)
+    [right_point] = temp_vl.intersection(right_border)
+    # print('left_point :', left_point)
+    mirrored_vl = (float(left_point[0]), float(left_point[1]), float(right_point[0]), float(right_point[1]))
+
+    return mirrored_vl
+
+
+def choose_4points(toppest_vl, bottest_vl, src_point, left_border, right_border, parallel):
+    x1, y1, x0, y0 = toppest_vl
+    if parallel:
+        top_line = Line((x1, y1), (x0, y0))
+        print('top_line.slope :', float(top_line.slope))
+        if abs(top_line.slope) < 0.05:
+            src_point = (0, 0)
+        parallel_tl = top_line.parallel_line(src_point)
+
+        [tl] = parallel_tl.intersection(left_border)
+        [tr] = parallel_tl.intersection(right_border)
+        br, bl = bottest_vl[2:], bottest_vl[:2]
+    else:
+        tl, tr, br, bl = toppest_vl[:2], toppest_vl[2:], bottest_vl[2:], bottest_vl[:2]
+
+    return tl, tr, br, bl
+
+
+def top_bot_mask(mask_img, threshold=1 / 10):
+    top_white_cnt = 0
+    bot_white_cnt = 0
+    white_min_x = mask_img.shape[1]
+    white_max_x = 0
+    white_min_y = mask_img.shape[0]
+    white_max_y = 0
+    temp_min_y = white_min_y
+    temp_max_y = white_max_y
+    min_x_coord, max_x_coord, min_y_coord, max_y_coord = None, None, None, None
+    top_parallel = False
+    bot_parallel = False
+    for i in range(mask_img.shape[1]):
+
+        #     Check Top Condition     #
+        for j in range(int(mask_img.shape[0] * threshold)):
+            # if mask_img[j][i] == 255 and j < thr_min_y:
+            # thr_min_y = j
+            # thr_min_y_coord = (i, j)
+            if mask_img[j][i] == 255:
+                top_white_cnt += 1
+                if i > white_max_x:
+                    white_max_x = i
+                    max_x_coord = (i, j)
+                if i < white_min_x:
+                    white_min_x = i
+                    min_x_coord = (i, j)
+
+                if j < temp_min_y:
+                    temp_min_y = j
+                    temp_min_y_coord = (i, j)
+
+        #           Middle Condition        #
+        for j in range(int(mask_img.shape[0] * threshold), int(mask_img.shape[0] * (1 - threshold))):
+            if mask_img[j][i] == 255:
+                if j > white_max_y:
+                    white_max_y = j
+                    max_y_coord = (i, j)
+                if j < white_min_y:
+                    white_min_y = j
+                    min_y_coord = (i, j)
+
+        #     Check Bot Condition   #
+        for j in range(int(mask_img.shape[0] * (1 - threshold)), mask_img.shape[0]):
+            # if mask_img[j][i] == 255 and j < thr_min_y:
+            # thr_min_y = j
+            # thr_min_y_coord = (i, j)
+            if mask_img[j][i] == 255:
+                bot_white_cnt += 1
+                if j > temp_max_y:
+                    temp_max_y = j
+                    temp_max_y_coord = (i, j)
+
+    if top_white_cnt / (mask_img.shape[1] * int(mask_img.shape[0] * threshold)) > 0.5:
+        top_parallel = True
+        min_y_coord = temp_min_y_coord
+
+    if bot_white_cnt / (mask_img.shape[1] * int(mask_img.shape[0] * threshold)) > 0.5:
+        #     바닥은 평행 이동 사용하지 않는다.    #
+        # bot_parallel = True
+        max_y_coord = temp_max_y_coord
+
+    return min_x_coord, max_x_coord, min_y_coord, max_y_coord, top_parallel, bot_parallel
+
+
+def crop_and_warp(refer, vl_img, src_4p, dst_4p):
+    #       Crop      #
+    refered = np.asarray(refer)[:vl_img.shape[0], :vl_img.shape[1]]
+
+    # plt.imshow(refered)
+    # plt.title('refered')
+    # plt.show()
+
+    # compute the perspective transform matrix and then apply it
+    matrix = cv2.getPerspectiveTransform(src_4p, dst_4p)
+    refered = cv2.warpPerspective(refered, matrix, (refered.shape[1], refered.shape[0]))
+
+    return refered
+
+

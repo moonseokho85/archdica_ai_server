@@ -86,7 +86,7 @@ class ConvertImageAPIView(APIView):
 
             # Synthesize room image and material image
             conversion_image_url = synthesize(room_image_url, reference_image_url,
-                                              posts_serializer.validated_data['type'])
+                                              posts_serializer.validated_data['type'], scale_factor=1.)
             print("conversion_image_url: ", conversion_image_url)
 
             newdict = {

@@ -74,8 +74,14 @@ def visualize_mask(data, pred, cfg):
     print("img_name: ", img_name)
     print("cfg.TEST.result: ", cfg.TEST.result)
 
+    (filename, file_extension) = os.path.splitext(img_name)
+    if file_extension is not '.png':
+        file_extension = '.png'
+
+    img_name = filename + file_extension
+
     # Image.fromarray(pred.astype(np.uint8)).save(os.path.join(cfg.TEST.result, 'pred_' + img_name.replace('.jpg', '.png')))
-    Image.fromarray(im_vis).save(os.path.join(cfg.TEST.result, img_name.replace('.jpg', '.png')))
+    Image.fromarray(im_vis).save(os.path.join(cfg.TEST.result, img_name, 'PNG'))
 
     # Upload through S3
     BASE_DIR = Path(__file__).resolve().parent.parent.parent
